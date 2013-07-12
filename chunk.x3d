@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<X3D profile='Immersive'>
+    <Scene>
+        <Transform id="transform" scale="1.0 0.35 1.0">
+            <Shape id='shape'>
+                <Appearance id="appearance">
+                    <Material id="material" diffuseColor="0.8 0.8 0.8" specularColor="0.6 0.6 0.6"
+                              emissivecolor="0.6,0.6,0.6" shininess="0.2"> </Material>
+                    <ImageTexture id="imageTexture"> </ImageTexture>
+                    <TextureTransform id="textureTransform" scale="1.0 -1.0"> </TextureTransform>
+                </Appearance>
+                <ElevationGrid
+                        id="placeholder"
+                        xDimension="1"
+                        zDimension="1"
+                        height="0"
+                        xSpacing="1.0"
+                        zSpacing="1.0"
+                />
+            </Shape>
+        </Transform>
+    </Scene>
+</X3D>
