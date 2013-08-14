@@ -35,7 +35,7 @@ function initmap()
                     //new OpenLayers.Control.LayerSwitcher({'ascending':false}),
                     //new OpenLayers.Control.Permalink(),
                     //new OpenLayers.Control.ScaleLine(),
-                    new OpenLayers.Control.Permalink('permalink'),
+                    //new OpenLayers.Control.Permalink('permalink'),
                     new OpenLayers.Control.MousePosition()
                     //new OpenLayers.Control.OverviewMap(),
                     //new OpenLayers.Control.KeyboardDefaults()
@@ -70,28 +70,6 @@ function initmap()
 	                { map: "/var/lib/pgsql/process_data/globalwms/themis.map", layers: 'themisirday', projection: 'PS:2?0', transparent: 'true'},
                     {isBaseLayer: false, opacity: 0.5, transitionEffect: 'resize', wrapDateLine: true});
     
-    // GaleHRSCWms = new OpenLayers.Layer.WMS(
-                // "Gale HRSC mosaic",
-                // planetserver_ps_wms,
-                // {
-                    // layers: 'galehrsc_wms',
-                    // transparent: true,
-                    // version: '1.1.0',
-                    // projection: new OpenLayers.Projection("PS:1")
-                // }
-            // );
-    
-    // GaleCTXWms = new OpenLayers.Layer.WMS(
-                // "Gale CTX mosaic",
-                // planetserver_ps_wms,
-                // {
-                    // layers: 'galectx_wms',
-                    // transparent: true,
-                    // version: '1.1.0',
-                    // projection: new OpenLayers.Projection("PS:1")
-                // }
-            // );
-    
     // ATTEMPTS to get http://commondatastorage.googleapis.com/ctx_mosaic_1/ctx_mosaic_1.kml
     // var kmlctx = new OpenLayers.Layer.TileCache("CTX Mosaic", {
             // projection: map.displayProjection,
@@ -120,11 +98,7 @@ function initmap()
         // });
  
     map.addLayers([fake, GlobalMOLARGB, GlobalTHEMISIRday]); //, GaleHRSCWms, GaleCTXWms]);
-    // Zoom to Gale Crater
-    var lon = 137.93321;
-    var lat = -4.84569;
-    var zoom = 8;
-    map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+    map.zoomTo(3);
     }
 function initpanels()
     {
@@ -158,8 +132,8 @@ function initpanels()
     ]);
     panel3.addControls([
          toggleTutorial,
-        toggleAbout,
-        permalink
+        toggleAbout//,
+        //permalink
     ]);
     // add the panel to the map
     map.addControl(panel);

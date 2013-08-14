@@ -58,9 +58,11 @@ var planetserver_ms_wms = "http://planetserver.jacobs-university.de/cgi-bin/maps
 var planetserver_wcps = "http://planetserver.jacobs-university.de:8080/petascope";
 var planetserver_wcsdc = "http://planetserver.jacobs-university.de:8080/petascope/wcs?version=2.0.0&service=WCS&request=DescribeCoverage&coverageId=";
 Proj4js.defs["PS:1"] = "+proj=longlat +a=3396190 +b=3396190 +no_defs";
+Proj4js.defs["ODE"] = "+proj=longlat +a=3396190 +b=3396190 +lon_wrap=180 +no_defs";
 //Proj4js.defs["EPSG:4326"] = "+proj=longlat +a=3396190 +b=3396190 +no_defs";
 Proj4js.defs["PS:2?0"] = "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +a=3396190 +b=3396190 +units=m +no_defs";
 Proj4js.defs["PS:2?180"] = "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=0 +a=3396190 +b=3396190 +units=m +no_defs";
+//Proj4js.reportError = function(msg) {alert(msg);}
 
 // These variables are part of the rasdaman collection name. For example:
 // When querying ODE REST you get:

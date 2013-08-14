@@ -73,16 +73,6 @@ function initmapevents()
         title: "Select"
     });
 
-    // register events to the featureInfo tool
-    featureInfo.events.register("activate", featureInfo, function() {     
-        highlightCtrl.activate();
-        selectCtrl.activate();
-    });                
-    featureInfo.events.register("deactivate", featureInfo, function() {
-        highlightCtrl.deactivate();
-        selectCtrl.deactivate();
-    });
-
     // build the Spectrum functionality
     featureInfo1 = new OpenLayers.Control({
         displayClass: "olControlFeatureInfo1",

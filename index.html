@@ -53,8 +53,9 @@
 		<script src='toc.js' type='text/javascript'></script>
 		<script src='metadata.js' type='text/javascript'></script>
 		<script src='summaryproducts.js' type='text/javascript'></script>
-		<script src='loaddata.js' type='text/javascript'></script>
-        <script src='footprints.js' type='text/javascript'></script>
+		<script src='loadhs.js' type='text/javascript'></script>
+        <!--<script src='footprints.js' type='text/javascript'></script>-->
+		<script src='loadregion.js' type='text/javascript'></script>
 		<script src='main.js' type='text/javascript'></script>
 	</head>
 	<body>
@@ -68,9 +69,16 @@
             <li><a href="http://www.earthserver.eu" target="_new"><img src="images/1x1.gif" width=40 height=40 border=0></a></li>
             <!--<li><input type="button" name="hrscload" id="hrscload" value="Load HRSC+DTM" /></li>
             <li><input type="button" name="crismload" id="crismload" value="Load CRISM" /></li>-->
-            <li><a id="dtm">DTM:</a> <select name="choosedtm" id="choosedtm">
+            <li><a id="headerselects">Region:</a> <select name="chooseregion" id="chooseregion">
+              <option value="default"></option>
+              <option value="gale">Gale crater</option>
+              <option value="ganges">Ganges Chasma</option>
+              <option value="capri">Capri Chasma</option>
+              <option value="juventae">Juventae Chasma</option>
+            </select></li>
+            <li><a id="headerselects">DTM:</a> <select name="choosedtm" id="choosedtm">
               <option value="mola">MOLA</option>
-              <option value="hrsc">Gale HRSC DTM</option>
+              <!--<option value="hrsc">Gale HRSC DTM</option>-->
             </select></li>
 			<li><div id="panel" class="olControlPanel"></div></li>
 			<li><div id="panel2" class="olControlPanel"></div></li>
