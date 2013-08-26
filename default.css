@@ -584,6 +584,9 @@ ul.tabs li a.selected, ul.tabs1 li a.selected1, ul.tabs2 li a.selected2 {
     border:1px solid #fff;
     text-align: center;
 }
+.tab-content1 {
+    margin-left: -250px;
+}
 #planetServer, #developers, #software, #data {
 	top: 80px;
 	position: absolute;

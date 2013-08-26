@@ -65,7 +65,14 @@ function initloadhs()
     $('#vnirorirselect').click(function(){
         // choose VNIR or IR
         toggleDisplay('vnirorir');
-        footprints.setVisibility(false);
+        try
+            {
+            footprints.setVisibility(false);
+            }
+        catch(err)
+            {
+            //
+            }
         //curiosity.setVisibility(false);
         //var band_array;
         if($("#vnircheck").attr('checked') == "checked")

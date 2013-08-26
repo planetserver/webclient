@@ -28,11 +28,63 @@ dtmdefault.ymax = 88;
 dtmdefault.width = 46080;
 dtmdefault.height = 22528;
 
+// Regions
+var regions = {
+    'gale': 
+        {'id': 'gale',
+        'name': 'Gale crater',
+        'westernlon': 135.5,
+        'easternlon': 140,
+        'minlat': -7.5,
+        'maxlat': -3,
+        'wms': [
+            {'name': 'Gale HRSC mosaic',
+            'map': '/var/lib/pgsql/process_data/wms/gale/galehrsc.map',
+            'layer': 'galehrsc',
+            'projection': 'PS:1'},
+            {'name': 'Gale CTX mosaic',
+            'map': '/var/lib/pgsql/process_data/wms/gale/galectx.map',
+            'layer': 'galectx',
+            'projection': 'PS:1'}],
+        'dtm': [
+            {'collection': 'galehrscdtm',
+            'name': 'Gale HRSC DTM'}]
+        },
+    'ganges':
+        {'id': 'ganges',
+        'name': 'Ganges Chasma',
+        'westernlon': -55,
+        'easternlon': -40,
+        'minlat': -11,
+        'maxlat': -5.5,
+        'wms':[],
+        'dtm':[]},
+    'capri':
+        {'id': 'capri',
+        'name': 'Capri Chasma',
+        'westernlon': -58,
+        'easternlon': -36,
+        'minlat': -18.5,
+        'maxlat': -10,
+        'wms':[],
+        'dtm':[]},
+    'juventae':
+        {'id': 'juventae',
+        'name': 'Juventae Chasma',
+        'westernlon': -64,
+        'easternlon': -59,
+        'minlat': -6,
+        'maxlat': -0.5,
+        'wms':[],
+        'dtm':[]}
+};
+
 // JSON for currently loaded elevation dataset, default 'moladtm'.
 dtmdataset = {}
 dtmdataset = jQuery.extend({}, dtmdefault);
 
 // Changing variables
+var WMSlayers = [];
 var PNGimages = [];
 var imagedata = [];
 var diagramplot = {};

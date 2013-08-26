@@ -2,6 +2,8 @@ var footprints;
 var highlightCtrl;
 var selectCtrl;
 var curiosity;
+//var GaleHRSCWms;
+//var GaleCTXWms;
 
 function dtm_load()
     {
@@ -27,89 +29,66 @@ function dtm_load()
 
 function initloadregion()
     {
-    $('#chooseregion').change(function(){
-        if($('#chooseregion').val() == "gale")
-            {
-            name = "Gale crater";
-            var westernlon = 135.5;
-            var easternlon = 140;
-            var minlat = -7.5;
-            var maxlat = -3;
-            getODEfootprints(name,westernlon,easternlon,minlat,maxlat); // building footprints object
-            
-            // GaleHRSCWms = new OpenLayers.Layer.WMS(
-                        // "Gale HRSC mosaic",
-                        // planetserver_ps_wms,
-                        // {
-                            // layers: 'galehrsc_wms',
-                            // transparent: true,
-                            // version: '1.1.0',
-                            // projection: new OpenLayers.Projection("PS:1")
-                        // }
-                    // );
-            
-            // GaleCTXWms = new OpenLayers.Layer.WMS(
-                        // "Gale CTX mosaic",
-                        // planetserver_ps_wms,
-                        // {
-                            // layers: 'galectx_wms',
-                            // transparent: true,
-                            // version: '1.1.0',
-                            // projection: new OpenLayers.Projection("PS:1")
-                        // }
-                    // );
-            
-            map.zoomToExtent(footprints.getDataExtent());
-            add_curiosity_location();
-            
-            $('#choosedtm').change(function(){
-                if($('#choosedtm').val() == "mola")
-                    {
-                    // clone dtmdefault into dtmdataset
-                    // dtmdataset = dtmdefault; doesnt work.
-                    dtmdataset = jQuery.extend({}, dtmdefault);
-                    }
-                else if($('#choosedtm').val() == "hrsc")
-                    {
-                    dtmdataset.collection = 'galehrscdtm';
-                    dtm_load();
-                    }
-
-            });
-            }
-        else if($('#chooseregion').val() == "ganges")
-            {
-            name = "Ganges Chasma";
-            var westernlon = -55;
-            var easternlon = -40;
-            var minlat = -11;
-            var maxlat = -5.5;
-            getODEfootprints(name,westernlon,easternlon,minlat,maxlat);
-            map.zoomToExtent(footprints.getDataExtent());
-            }
-        else if($('#chooseregion').val() == "capri")
-            {
-            name = "Capri Chasma";
-            var westernlon = -58;
-            var easternlon = -36;
-            var minlat = -18.5;
-            var maxlat = -10;
-            getODEfootprints(name,westernlon,easternlon,minlat,maxlat);
-            map.zoomToExtent(footprints.getDataExtent());
-            }
-        else if($('#chooseregion').val() == "juventae")
-            {
-            name = "Juventae Chasma";
-            var westernlon =-64;
-            var easternlon = -59;
-            var minlat = -6;
-            var maxlat = -0.5;
-            getODEfootprints(name,westernlon,easternlon,minlat,maxlat);
-            map.zoomToExtent(footprints.getDataExtent());
-            }
-	});
-    }
+    for(region in regions)
+        {
+        $("#chooseregion").append("<option value='" + region + "'>" + regions[region].name + "</option>");
+        }
     
+    $('#chooseregion').change(function()
+        {
+        if($('#chooseregion').val() != '')
+            {
+            region = $('#chooseregion').val();
+            data = regions[region];
+            getODEfootprints(data.name,data.westernlon,data.easternlon,data.minlat,data.maxlat);
+            
+            // WMS
+            // Remove previously loaded WMS layers
+            for(var i = 0; i < WMSlayers.length; i++)
+                {
+                map.removeLayer(WMSlayers[i]);
+                }
+            // Add new WMS layers
+            wms = data['wms'];
+            for(var i = 0; i < wms.length; i++)
+                {
+                temp = new OpenLayers.Layer.MapServer(wms[i].name,
+	                planetserver_ms_wms,
+	                { map: wms[i].map, layers: wms[i].layer, projection: wms[i].projection},
+                    {isBaseLayer: false, transitionEffect: 'resize'});
+                map.addLayers([temp]);
+                WMSlayers[i] = temp;
+                }
+            map.addLayers([footprints]);
+            map.zoomToExtent(footprints.getDataExtent());
+            
+            // DTM
+            dtm = data['dtm'];
+            for(var i = 0; i < dtm.length; i++)
+                {
+                $('#choosedtm').append("<option value='" + dtm[i].collection + "'>" + dtm[i].name + "</option>");
+                }
+            $('#choosedtm').change(function()
+                {
+                if($('#choosedtm').val() != '')
+                    {
+                    if($('#choosedtm').val() == 'mola')
+                        {
+                        // clone dtmdefault into dtmdataset
+                        // dtmdataset = dtmdefault; doesnt work.
+                        dtmdataset = jQuery.extend({}, dtmdefault);
+                        }
+                    else
+                        {
+                        dtmdataset.collection = $('#choosedtm').val();
+                        dtm_load();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 function add_curiosity_location()
     {
     // CURIOSITY LANDING SITE
@@ -201,16 +180,7 @@ function getODEfootprints(name,westernlon,easternlon,minlat,maxlat)
             if(showfootprint == 1)
                 {
                 wktstring = products[i].Footprint_geometry;
-                // while(typeof wktstring === 'undefined'){
-                    // wktstring = products[i].Footprint_geometry;
-                // };
-                // ODE REST works with 0,360 longitudes
-                // try {
-                    // wktstring = wktto180(wktstring);
-                // } catch (err) {
-                    // alert(wktstring);
-                // }
-                wktstring = wktto180(wktstring);
+                wktstring = wktto180(wktstring); 
                 var polygonFeature = wkt.read(wktstring);
                 polygonFeature.data = products[i]
                 //polygonFeature.geometry.transform(map.displayProjection, map.getProjectionObject());         
@@ -251,8 +221,8 @@ function getODEfootprints(name,westernlon,easternlon,minlat,maxlat)
         highlightCtrl.deactivate();
         selectCtrl.deactivate();
     });
-    map.addLayers([footprints]);
-    footprints.setZIndex(1501);
+    //map.addLayers([footprints]);
+    //footprints.setZIndex(1501);
     }
 
 function wktto180(wktstring)

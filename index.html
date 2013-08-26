@@ -55,7 +55,18 @@
 		<script src='summaryproducts.js' type='text/javascript'></script>
 		<script src='loadhs.js' type='text/javascript'></script>
 		<script src='loadregion.js' type='text/javascript'></script>
+		<script src='urlquery.js' type='text/javascript'></script>
 		<script src='main.js' type='text/javascript'></script>
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-42984080-1', 'planetserver.eu');
+        ga('send', 'pageview');
+
+        </script>
 	</head>
 	<body>
 		<div id="map"></div>
@@ -70,14 +81,9 @@
             <li><input type="button" name="crismload" id="crismload" value="Load CRISM" /></li>-->
             <li><a id="headerselects">Region:</a> <select name="chooseregion" id="chooseregion">
               <option value="default"></option>
-              <option value="gale">Gale crater</option>
-              <option value="ganges">Ganges Chasma</option>
-              <option value="capri">Capri Chasma</option>
-              <option value="juventae">Juventae Chasma</option>
             </select></li>
             <li><a id="headerselects">DTM:</a> <select name="choosedtm" id="choosedtm">
               <option value="mola">MOLA</option>
-              <!--<option value="hrsc">Gale HRSC DTM</option>-->
             </select></li>
 			<li><div id="panel" class="olControlPanel"></div></li>
 			<li><div id="panel2" class="olControlPanel"></div></li>
@@ -102,7 +108,7 @@
 				   <li><a href="javascript:void(0)" rel="tabs13">Software</a></li>
 				   <li><a href="javascript:void(0)" rel="tabs14">Data</a></li>
 			    </ul>		 
-			    <div class="tab-content1" id="tabs11"><div id="planetServer">TBA</div></div>
+			    <div class="tab-content1" id="tabs11"><div id="planetServer"><br><a href="http://blog.planetserver.eu/?page_id=2" target="_new" style="color: black;font-size: 20px;">blog.planetserver.eu</a></div></div>
 			    <div class="tab-content1" id="tabs12"><div id="developers">TBA</div></div>
 			    <div class="tab-content1" id="tabs13"><div id="software">TBA</div></div>
 			    <div class="tab-content1" id="tabs14"><div id="data">TBA</div></div>

@@ -14,4 +14,6 @@ jQuery(document).ready(function(){
     initguievents(); //gui.js
     initpanels(); //planetmap.js
     initvectors(); //planetmap.js
+    checksinglecollection(); //urlquery.js
+    checkregion(); //urlquery.js
 });
