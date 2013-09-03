@@ -2,7 +2,7 @@
 
 // JSON for hyperspectral data
 hsdataset = {};
-hsdataset.crs = 'http://kahlua.eecs.jacobs-university.de:8080/def/crs/PS/0/1/';
+hsdataset.crs = 'http://kahlua.eecs.jacobs-university.de:8080/def/crs/PS/0/2/';
 hsdataset.prj = 'GEOGCS["GCS_Mars_2000_Sphere",DATUM["D_Mars_2000_sphere",SPHEROID["Mars_2000_Sphere",3396190.0,0.0]],PRIMEM["Reference_Meridian",0.0],UNIT["Degree",0.0174532925199433]]';
 hsdataset.productid = "";
 hsdataset.point = []; // saves data of the clicked locations for query map features
@@ -27,6 +27,20 @@ dtmdefault.ymin = -88;
 dtmdefault.ymax = 88;
 dtmdefault.width = 46080;
 dtmdefault.height = 22528;
+
+//MRDR
+var mrdr = {
+    'T0667_MRRIF_20S043_0256_3':
+        {'name': 'T0667_MRRIF_20S043_0256_3',
+        'westernlon': 40,
+        'easternlon': 45,
+        'minlat': -22.5,
+        'maxlat': -17.5,
+        'wms': {'name': 'CTX of T0667_MRRIF_20S043_0256_3',
+            'map': '/var/lib/pgsql/process_data/wms/noachis/T0667_MRRIF_20S043_0256_3.map',
+            'layer': 'T0667_MRRIF_20S043_0256_3',
+            'projection': 'PS:2'}}
+    };
 
 // Regions
 var regions = {
@@ -58,7 +72,9 @@ var regions = {
         'minlat': -11,
         'maxlat': -5.5,
         'wms':[],
-        'dtm':[]},
+        'dtm':[
+            {'collection': 'gangeshrscdtm',
+            'name': 'Ganges HRSC DTM'}]},
     'capri':
         {'id': 'capri',
         'name': 'Capri Chasma',
@@ -97,12 +113,14 @@ var turn = 0; // A global variable to keep track of turns for finding spectral r
 var crossturn = 0;
 var rgb = 0;
 
-// Non changing variables. These can later be added to a properties window.
+// User changable variables. These can later be added to a properties/settings window.
 var nrpoints = 100;
-var bin = 3;
-var nrclicks = 10;
+var bin = 3; //spectrum binning, default 3x3
+var nrclicks = 10; // nrclicks and nr of colors need to be the same
 var colors = [ "Red", "Green", "Blue", "#6500bb", "Magenta", "Pink", "Gray", "Brown", "Orange", "Yellow"];
 var pointsize = 0.0024;
+var minstretch = 0;
+var maxstretch = 0;
 
 // Fixed variables
 var planetserver_ps_wms = "http://planetserver.jacobs-university.de:8080/petascope/wms";

@@ -170,7 +170,6 @@ function initmapevents()
     }});
     function fire(e)
         {
-        $('#loader').show();
         // draw spectra
         var lonlat = map.getLonLatFromPixel(e.xy);
         var lon = lonlat.lon;
@@ -190,7 +189,6 @@ function initmapevents()
         }
 	function fire2(e)
         {
-        $('#loader').show();
         // ratio
         var lonlat = map.getLonLatFromPixel(e.xy);
         var lon = lonlat.lon;

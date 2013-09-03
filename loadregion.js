@@ -27,6 +27,22 @@ function dtm_load()
     dtmdataset.height = data.height;
     }
 
+function loadmrdr(productid)
+    {
+    data = mrdr[productid];
+    getODEfootprints('CRISM footprints',data.westernlon,data.easternlon,data.minlat,data.maxlat);
+    
+    // WMS
+    temp = new OpenLayers.Layer.MapServer(data.wms.name,
+        planetserver_ms_wms,
+        { map: data.wms.map, layers: data.wms.layer, projection: data.wms.projection},
+        {isBaseLayer: false, transitionEffect: 'resize'});
+    map.addLayers([temp]);
+    WMSlayers[0] = temp;
+    map.addLayers([footprints]);
+    map.zoomToExtent(footprints.getDataExtent());
+    }
+    
 function initloadregion()
     {
     for(region in regions)
@@ -40,7 +56,7 @@ function initloadregion()
             {
             region = $('#chooseregion').val();
             data = regions[region];
-            getODEfootprints(data.name,data.westernlon,data.easternlon,data.minlat,data.maxlat);
+            getODEfootprints('CRISM footprints',data.westernlon,data.easternlon,data.minlat,data.maxlat);
             
             // WMS
             // Remove previously loaded WMS layers

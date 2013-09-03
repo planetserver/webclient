@@ -16,4 +16,5 @@ jQuery(document).ready(function(){
     initvectors(); //planetmap.js
     checksinglecollection(); //urlquery.js
     checkregion(); //urlquery.js
+    checkmrdr(); //urlquery.js
 });

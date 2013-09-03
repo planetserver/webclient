@@ -56,25 +56,37 @@ function max(calculation)
     var data = csv(calculation);
     return parseFloat(data.data);
     }
-function minstr(calculation)
-    {
-    calculation = band2data(calculation.toString());
-    var nodata = hsdataset.nodata;
-    if(nodata > 0)
-        {
-        return 'min(' + calculation + ')';
-        }
-    else
-        {
-        return 'min(((' + calculation + ')=' + nodata + ') * ((' + calculation + ') + 1) + ((' + calculation + ')!=' + nodata + ') *  (' + calculation + '))';
-        }
-    }
+// RASDAMAN COMMUNITY VERSIONS
+// function minstr(calculation)
+    // {
+    // calculation = band2data(calculation.toString());
+    // var nodata = hsdataset.nodata;
+    // if(nodata > 0)
+        // {
+        // return 'min(' + calculation + ')';
+        // }
+    // else
+        // {
+        // return 'min(((' + calculation + ')=' + nodata + ') * ((' + calculation + ') + 1) + ((' + calculation + ')!=' + nodata + ') *  (' + calculation + '))';
+        // }
+    // }
+// function maxstr(calculation)
+    // {
+    // calculation = band2data(calculation.toString());
+    // var nodata = hsdataset.nodata;
+    // return 'max(((' + calculation + ')!=' + nodata + ') * (' + calculation + '))';
+    // }
 function maxstr(calculation)
     {
     calculation = band2data(calculation.toString());
-    var nodata = hsdataset.nodata;
-    return 'max(((' + calculation + ')!=' + nodata + ') * (' + calculation + '))';
+    return 'max(' + calculation + ')';
     }
+function minstr(calculation)
+    {
+    calculation = band2data(calculation.toString());
+    return 'min(' + calculation + ')';
+    }
+
 function band2data(string)
 {
     // http://stackoverflow.com/questions/504219/javascript-add-or-subtract-from-number-in-string
@@ -106,11 +118,18 @@ function worldfile()
     // }
 function image(string)
     {
+    // if(sp.hasOwnProperty(string))
+        // {
+        // string = sp[string];
+        // }
     datastring = band2data(string.toString());
     var collection = hsdataset.collection;
-    max_value = maxstr(datastring);
-    min_value = minstr(datastring);
-    var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + max_value + ' - ' + min_value + ')) * ((' + datastring + ') - ' + min_value + '), "png" )';
+    if(maxstretch == 0)
+        {
+        maxstretch = maxstr(datastring);
+        }
+    //min_value = minstr(datastring);
+    var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
     if($("#savecheck").attr('checked') == "checked")
         {
         var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
@@ -159,17 +178,29 @@ function image(string)
     }
 function rgbimage(red,green,blue)
     {
+    // if(sp.hasOwnProperty(red))
+        // {
+        // red = sp[red];
+        // }
+    // if(sp.hasOwnProperty(green))
+        // {
+        // green = sp[green];
+        // }
+    // if(sp.hasOwnProperty(blue))
+        // {
+        // blue = sp[blue];
+        // }
     red = band2data(red.toString());
     green = band2data(green.toString());
     blue = band2data(blue.toString());
     var collection = hsdataset.collection;
     maxred_value = maxstr(red);
-    minred_value = minstr(red);
+    //minred_value = minstr(red);
     maxgreen_value = maxstr(green);
-    mingreen_value = minstr(green);
+    //mingreen_value = minstr(green);
     maxblue_value = maxstr(blue);
-    minblue_value = minstr(blue);
-    wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char)({ red: (char) (255 / (' + maxred_value + ' - ' + minred_value + ')) * ((' + red + ') - ' + minred_value + '); green: (char) (255 / (' + maxgreen_value + ' - ' + mingreen_value + ')) * ((' + green + ') - ' + mingreen_value + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minblue_value + ')) * ((' + blue + ') - ' + minblue_value + '), "png" )';
+    //minblue_value = minstr(blue);
+    wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char)({ red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + '), "png" )';
     if($("#savecheck").attr('checked') == "checked")
         {
         var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
@@ -229,6 +260,7 @@ function histogramtocsv(numbers)
 function histogram(string, nrbins)
 {
     var nodata = hsdataset.nodata;
+    var collection = hsdataset.collection;
     var wcpsstring = 'wcps.php?use=histogram&nrbins='+ nrbins +'&collection=' + collection + '&nodata=' + nodata + '&calc=' + string;
     /*Change into BarDiagram.js???*/
     // extract numbers from the query using regex
@@ -640,8 +672,12 @@ function addspectrum(lon,lat)
                 }
                 spectrum_load(output,colors,hsdataset.collection);
             }
+            return true;
             }
-        return true;
+        else
+            {
+            return false;
+            }
         }
     else
         {
@@ -708,8 +744,12 @@ function ratiospectra(lon,lat)
                 turn++; // increase turn count
                 hsdataset.resp_data = avgbin(spectrabin); // to keep track of the first set of data
             }
-        }
-        return true;
+            return true;
+            }
+        else
+            {
+            return false;
+            }
         }
     else
         {

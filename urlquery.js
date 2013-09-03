@@ -21,7 +21,8 @@ var QueryString = function () {
     return query_string;
 } ();
 
-function checksinglecollection() {
+function checksinglecollection()
+    {
     if(typeof(QueryString.productid) != "undefined")
         {
         hsdataset.productid = QueryString.productid.toLowerCase();
@@ -29,8 +30,9 @@ function checksinglecollection() {
         hsdataset.nodata = 65535;
         hyperspectral_load();
         }
-}
-function checkregion() {
+    }
+function checkregion()
+    {
     if(typeof(QueryString.region) != "undefined")
         {
         var options = $('#chooseregion option');
@@ -42,4 +44,17 @@ function checkregion() {
                 }
         });
         }
-}
+    }
+function checkmrdr()
+    {
+    if(typeof(QueryString.mrdr) != "undefined")
+        {
+        for(productid in mrdr)
+            {
+            if(QueryString.mrdr.toUpperCase() == productid)
+                {
+                loadmrdr(productid); //loadregion.js
+                }
+            }
+        }
+    }
