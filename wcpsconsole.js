@@ -88,11 +88,28 @@ function minstr(calculation)
     }
 
 function band2data(string)
-{
+    {
     // http://stackoverflow.com/questions/504219/javascript-add-or-subtract-from-number-in-string
-    string = string.replace(/band(\d+)/g, function(a,n){ return "data."+ (+n-1); });
-    return string;
-}
+    string = string.replace(/band(\d+)/g, function(a,n)
+        {
+        if(hsdataset.metadata.bbl[nm2band(n-1,1)] == 0)
+            {
+            return "BAD";
+            }
+        else
+            {
+            return "data." + (+n-1);
+            }
+        });
+    if(string.indexOf("BAD") != -1)
+        {
+        return -1;
+        }
+    else
+        {
+        return string;
+        }
+    }
 function csv(string)
     {
     string = band2data(string.toString());
@@ -116,65 +133,85 @@ function worldfile()
     // string = string.replace(/\n/g, '%0A');
     // return string;
     // }
-function image(string)
+function image(string, tocstring)
     {
+    tocstring = (typeof tocstring === "undefined") ? "" : tocstring;
     // if(sp.hasOwnProperty(string))
         // {
         // string = sp[string];
         // }
     datastring = band2data(string.toString());
-    var collection = hsdataset.collection;
-    if(maxstretch == 0)
+    if(datastring != -1)
         {
-        maxstretch = maxstr(datastring);
-        }
-    //min_value = minstr(datastring);
-    var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
-    if($("#savecheck").attr('checked') == "checked")
-        {
-        var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
-        var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
-        window.open(pngurl,"_parent");
-        window.open(pgwurl,"_blank");
+        var collection = hsdataset.collection;
+        if(maxstretch == 0)
+            {
+            maxstretch = maxstr(datastring);
+            }
+        //min_value = minstr(datastring);
+        var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
+        if($("#savecheck").attr('checked') == "checked")
+            {
+            var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
+            window.open(pngurl,"_parent");
+            window.open(pgwurl,"_blank");
+            }
+        else
+            {
+            var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
+            var i = PNGimages.length;
+            var temp = {};
+            temp.type = "greyscale";
+            temp.base64 = base64Encode(getBinary(pngurl));
+            temp.wcps = wcpsquery;
+            if(tocstring != "")
+                {
+                temp.string = tocstring;
+                }
+            else
+                {
+                temp.string = checkpredef(string);
+                }
+            imagedata[i] = temp;
+            PNGimages[i] = new OpenLayers.Layer.Image(
+                string,
+                'data:image/png;base64,' + temp.base64,
+                hsdataset.bbox,
+                new OpenLayers.Size(hsdataset.width, hsdataset.height),
+                hsdataset.mapoptions
+                );
+            map.addLayers([PNGimages[i]]);
+            if (i == 1)
+                var html = '&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
+            else
+                var html = '</br>&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
+            $("#pngselect").append(html);
+            // SHOW/HIDE PNG IMAGE WHEN CHECKED OR UNCHECKED
+            $('.pnglayer').change(function() {
+                i = $(this).val();
+                //alert(i);
+                if ($(this).is(':checked')) {
+                    // the checkbox was checked
+                    PNGimages[i].setVisibility(true);
+                } 
+                else {
+                    // the checkbox was unchecked
+                    PNGimages[i].setVisibility(false);        
+                }
+            });
+            return wcpsquery;
+            }
         }
     else
         {
-        var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
-        var i = PNGimages.length;
-        var temp = {};
-        temp.type = "greyscale";
-        temp.base64 = base64Encode(getBinary(pngurl));
-        temp.wcps = wcpsquery;
-        temp.string = checkpredef(string);
-        imagedata[i] = temp;
-        PNGimages[i] = new OpenLayers.Layer.Image(
-            string,
-            'data:image/png;base64,' + temp.base64,
-            hsdataset.bbox,
-            new OpenLayers.Size(hsdataset.width, hsdataset.height),
-            hsdataset.mapoptions
-            );
-        map.addLayers([PNGimages[i]]);
-        if (i == 1)
-            var html = '&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
-        else
-            var html = '</br>&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
-        $("#pngselect").append(html);
-        // SHOW/HIDE PNG IMAGE WHEN CHECKED OR UNCHECKED
-        $('.pnglayer').change(function() {
-            i = $(this).val();
-            //alert(i);
-            if ($(this).is(':checked')) {
-                // the checkbox was checked
-                PNGimages[i].setVisibility(true);
-            } 
-            else {
-                // the checkbox was unchecked
-                PNGimages[i].setVisibility(false);        
-            }
-        });
-        return wcpsquery;
+        return "You used bad band(s)!";
         }
+    }
+function bdimage(low, center, high)
+    {
+    string = banddepth(low, center, high);
+    image(string, "banddepth(" + low + "," + center + "," + high + ")");
     }
 function rgbimage(red,green,blue)
     {
@@ -193,58 +230,65 @@ function rgbimage(red,green,blue)
     red = band2data(red.toString());
     green = band2data(green.toString());
     blue = band2data(blue.toString());
-    var collection = hsdataset.collection;
-    maxred_value = maxstr(red);
-    //minred_value = minstr(red);
-    maxgreen_value = maxstr(green);
-    //mingreen_value = minstr(green);
-    maxblue_value = maxstr(blue);
-    //minblue_value = minstr(blue);
-    wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char)({ red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + '), "png" )';
-    if($("#savecheck").attr('checked') == "checked")
+    if((red != -1) || (green != -1) || (blue != -1))
         {
-        var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
-        var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
-        window.open(pngurl,"_parent");
-        window.open(pgwurl,"_blank");
+        var collection = hsdataset.collection;
+        maxred_value = maxstr(red);
+        //minred_value = minstr(red);
+        maxgreen_value = maxstr(green);
+        //mingreen_value = minstr(green);
+        maxblue_value = maxstr(blue);
+        //minblue_value = minstr(blue);
+        wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char){ red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + ')}, "png" )';
+        if($("#savecheck").attr('checked') == "checked")
+            {
+            var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
+            window.open(pngurl,"_parent");
+            window.open(pgwurl,"_blank");
+            }
+        else
+            {
+            var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
+            var i = PNGimages.length;
+            var temp = {};
+            temp.type = "RGB";
+            temp.base64 = base64Encode(getBinary(pngurl));
+            temp.wcps = wcpsquery;
+            temp.string = checkpredef(red) + ";" + checkpredef(green) + ";" + checkpredef(blue);
+            imagedata[i] = temp;
+            PNGimages[i] = new OpenLayers.Layer.Image(
+                "RGB",
+                'data:image/png;base64,' + temp.base64,
+                hsdataset.bbox,
+                new OpenLayers.Size(hsdataset.width, hsdataset.height),
+                hsdataset.mapoptions
+                );
+            map.addLayers([PNGimages[i]]);
+            if (i == 1)
+                var html = '&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
+            else
+                var html = '</br>&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
+            $("#pngselect").append(html);
+            // SHOW/HIDE PNG IMAGE WHEN CHECKED OR UNCHECKED
+            $('.pnglayer').change(function() {
+                i = $(this).val();
+                //alert(i);
+                if ($(this).is(':checked')) {
+                    // the checkbox was checked
+                    PNGimages[i].setVisibility(true);
+                } 
+                else {
+                    // the checkbox was unchecked
+                    PNGimages[i].setVisibility(false);        
+                }
+            });
+            return wcpsquery;
+            }
         }
     else
         {
-        var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
-        var i = PNGimages.length;
-        var temp = {};
-        temp.type = "RGB";
-        temp.base64 = base64Encode(getBinary(pngurl));
-        temp.wcps = wcpsquery;
-        temp.string = checkpredef(red) + ";" + checkpredef(green) + ";" + checkpredef(blue);
-        imagedata[i] = temp;
-        PNGimages[i] = new OpenLayers.Layer.Image(
-            "RGB",
-            'data:image/png;base64,' + temp.base64,
-            hsdataset.bbox,
-            new OpenLayers.Size(hsdataset.width, hsdataset.height),
-            hsdataset.mapoptions
-            );
-        map.addLayers([PNGimages[i]]);
-        if (i == 1)
-            var html = '&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
-        else
-            var html = '</br>&nbsp;<input class="pnglayer" type="checkbox" value="'+ i +'" checked="true"/>' + imagedata[i].string;
-        $("#pngselect").append(html);
-        // SHOW/HIDE PNG IMAGE WHEN CHECKED OR UNCHECKED
-        $('.pnglayer').change(function() {
-            i = $(this).val();
-            //alert(i);
-            if ($(this).is(':checked')) {
-                // the checkbox was checked
-                PNGimages[i].setVisibility(true);
-            } 
-            else {
-                // the checkbox was unchecked
-                PNGimages[i].setVisibility(false);        
-            }
-        });
-        return wcpsquery;
+        return "You used bad band(s)!";
         }
     }
 function histogramtocsv(numbers)
@@ -354,10 +398,10 @@ function inextent(lat,lon)
         return false;
         }
     }
-function variables()
+function show(dict)
     {
     var string = "";
-    for (var key in dataset) {string = string + "dataset." + key + "\n"}
+    for (var key in dict) {string = string + key + "\n"}
     return string;
     }
 
@@ -629,7 +673,7 @@ function addspectrum(lon,lat)
         xy = lltoimagecrs(lon,lat);
         imagex = xy[0];
         imagey = xy[1];
-        var i = Math.floor(bin/2);
+        var i = Math.floor(binvalue/2);
         xplus = (imagex + i).toString();
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
@@ -699,7 +743,7 @@ function ratiospectra(lon,lat)
         xy = lltoimagecrs(lon,lat);
         imagex = xy[0];
         imagey = xy[1];
-        var i = Math.floor(bin/2);
+        var i = Math.floor(binvalue/2);
         xplus = (imagex + i).toString();
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
@@ -763,13 +807,13 @@ function getbin(response)
     response = response.replaceAll("}","");
     response = response.replaceAll("\"","");
     hsdataset.response = response;
-    var bin = response.split(",");
+    var binlist = response.split(",");
     var spectrabin = []
-    var outside = bin.length;
+    var outside = binlist.length;
     var k = 0;
-    for(var i = 0; i < bin.length; i++)
+    for(var i = 0; i < binlist.length; i++)
         {
-        var temp = bin[i].split(" ");
+        var temp = binlist[i].split(" ");
         numbers = [];
         var count = 0;
         for(var j = 0; j < temp.length; j++)
@@ -829,3 +873,18 @@ function avgbin(spectrabin)
         }
     return numbers;
     }
+function bin(value)
+    {
+    i = Math.floor(value/2);
+    binvalue = ((2*i) + 1);
+    if(binvalue > maxbin)
+        {
+        binvalue = maxbin;
+        return "Using maximum bin of " + binvalue + "x" + binvalue;
+        }
+    else
+        {
+        return "Using bin " + binvalue + "x" + binvalue;
+        }
+    }
+    

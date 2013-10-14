@@ -2,6 +2,19 @@ function hyperspectral_load()
     {
     showLoader();
     initmetadata(); //metadata.js
+    
+    // Load WMS and DTM if hsdataset.metadata.region exists:
+    if(hsdataset.metadata.region !== undefined)
+        {
+        data = regions[hsdataset.metadata.region];
+        loadregion(data);
+        }
+    
+    //
+    vector_layer.setZIndex(1200);
+    vector_layer2.setZIndex(1200);
+    vector_layer3.setZIndex(1200);
+    vector_layer4.setZIndex(1200);
 
     // Load image
     var bbox = new OpenLayers.Bounds(hsdataset.xmin, hsdataset.ymin, hsdataset.xmax, hsdataset.ymax);

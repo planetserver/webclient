@@ -204,8 +204,4 @@ function initvectors()
 
     //Add layers to the map
     map.addLayers([vector_layer,vector_layer2,vector_layer3,vector_layer4]);
-    vector_layer.setZIndex(1200);
-    vector_layer2.setZIndex(1200);
-    vector_layer3.setZIndex(1200);
-    vector_layer4.setZIndex(1200);
     }

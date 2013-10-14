@@ -39,7 +39,17 @@ var mrdr = {
         'wms': {'name': 'CTX of T0667_MRRIF_20S043_0256_3',
             'map': '/var/lib/pgsql/process_data/wms/noachis/T0667_MRRIF_20S043_0256_3.map',
             'layer': 'T0667_MRRIF_20S043_0256_3',
-            'projection': 'PS:2'}}
+            'projection': 'PS:2'}},
+    'T0666_MRRIF_20S038_0256_3':
+        {'name': 'T0666_MRRIF_20S038_0256_3',
+        'westernlon': 35,
+        'easternlon': 40,
+        'minlat': -22.5,
+        'maxlat': -17.5,
+        'wms': {'name': 'CTX of T0666_MRRIF_20S038_0256_3',
+            'map': '/var/lib/pgsql/process_data/wms/noachis/T0666_MRRIF_20S038_0256_3.map',
+            'layer': 'T0666_MRRIF_20S038_0256_3',
+            'projection': 'PS:2'}},
     };
 
 // Regions
@@ -92,6 +102,24 @@ var regions = {
         'minlat': -6,
         'maxlat': -0.5,
         'wms':[],
+        'dtm':[]},
+    'mawrth':
+        {'id': 'mawrth',
+        'name': 'Marwth Vallis',
+        'westernlon': -30,
+        'easternlon': -14,
+        'minlat': 19,
+        'maxlat': 28,
+        'wms':[],
+        'dtm':[]},
+    'nili':
+        {'id': 'nili',
+        'name': 'Nili Fossae',
+        'westernlon': 70,
+        'easternlon': 82,
+        'minlat': 16,
+        'maxlat': 30,
+        'wms':[],
         'dtm':[]}
 };
 
@@ -115,7 +143,8 @@ var rgb = 0;
 
 // User changable variables. These can later be added to a properties/settings window.
 var nrpoints = 100;
-var bin = 3; //spectrum binning, default 3x3
+var binvalue = 3; //spectrum binning, default 3x3
+var maxbin = 7;
 var nrclicks = 10; // nrclicks and nr of colors need to be the same
 var colors = [ "Red", "Green", "Blue", "#6500bb", "Magenta", "Pink", "Gray", "Brown", "Orange", "Yellow"];
 var pointsize = 0.0024;

@@ -33,7 +33,7 @@ function loadtoc()
     // REMOVED BUG: onclick="toggleDisplay(&quot;dimensions&quot;);... into onclick="toggleDisplay(&quot;bandselect&quot;)
     var html2 = '<input class="pnglayer" type="checkbox" value="0" checked="true"/><span href="javascript:void(0)" onclick="toggleDisplay(&quot;bandselect&quot;);toggleDisplay(&quot;pngselect&quot;)"><img id="special" src="images/collapse.png"/></span>&nbsp;' + PNGimages[0].name.substring(0,21);
     //var overlay = jQuery('<select multiple="multiple" name="bandselect" id="bandselect"></select>');
-    var overlay = jQuery('<ul class="tabs2"><li class="first"><a href="javascript:void(0)" class="defaulttab2" rel="tabs21">Bands</a></li><li><a href="javascript:void(0)" rel="tabs22">SP</a></li></ul><div class="tab-content2" id="tabs21"><select size=20 multiple="multiple" name="bandselect" id="bandselect"></select></div><div class="tab-content2" id="tabs22"><select size=20 multiple="multiple" name="spselect" id="spselect"></div>');
+    var overlay = jQuery('<ul class="tabs2"><li class="first"><a href="javascript:void(0)" class="defaulttab2" rel="tabs21" style="font-size: 12px;">Bands&nbsp;</a></li><li><a href="javascript:void(0)" rel="tabs22" style="font-size: 12px;">&nbsp;SP</a></li></ul><div class="tab-content2" id="tabs21"><select size=20 multiple="multiple" name="bandselect" id="bandselect"></select></div><div class="tab-content2" id="tabs22"><select size=20 multiple="multiple" name="spselect" id="spselect"></div>');
     var overlay2 = jQuery('<form id="pngsel"></form>');
     var overlay3 = jQuery('<form id="pngselect"></form>');
     var layerSwitcher = new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('layerswitcher')});

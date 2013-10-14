@@ -177,7 +177,9 @@ function checkpredef(string) {
         return string;
         }
 }
-function nm2band(nm) {
+function nm2band(nm, nr)
+    {
+    nr = (typeof nr === "undefined") ? 0 : nr;
     // Similar as mro_crism_lookupwv.pro
     data = hsdataset.metadata.wavelength;
     bandnr = 0;
@@ -196,13 +198,17 @@ function nm2band(nm) {
     // Take band with minimum distance from mm:
     if(Math.abs(data[(bandnr - 1)] - mm) <= Math.abs(data[bandnr] - mm))
         {
-        return 'data.' + (bandnr - 1);
+        bandnr = (bandnr - 1);
+        }
+    if(nr == 1)
+        {
+        return bandnr
         }
     else
         {
         return 'data.' + bandnr;
-        }                
-}
+        }
+    }
 function nm2wavelength(nm) {
     // Similar as mro_crism_lookupwv.pro
     data = hsdataset.metadata.wavelength;
@@ -232,7 +238,7 @@ function nm2wavelength(nm) {
     if(Math.abs(data[(bandnr - 1)] - mm) <= Math.abs(data[bandnr] - mm))
         {
         //band = "band" + bandnr
-        return hsdataset.metadata.wavelength[bandnr];
+        return hsdataset.metadata.wavelength[bandnr - 1];
         }
     else
         {

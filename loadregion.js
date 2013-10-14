@@ -56,55 +56,59 @@ function initloadregion()
             {
             region = $('#chooseregion').val();
             data = regions[region];
+            loadregion(data);
             getODEfootprints('CRISM footprints',data.westernlon,data.easternlon,data.minlat,data.maxlat);
-            
-            // WMS
-            // Remove previously loaded WMS layers
-            for(var i = 0; i < WMSlayers.length; i++)
-                {
-                map.removeLayer(WMSlayers[i]);
-                }
-            // Add new WMS layers
-            wms = data['wms'];
-            for(var i = 0; i < wms.length; i++)
-                {
-                temp = new OpenLayers.Layer.MapServer(wms[i].name,
-	                planetserver_ms_wms,
-	                { map: wms[i].map, layers: wms[i].layer, projection: wms[i].projection},
-                    {isBaseLayer: false, transitionEffect: 'resize'});
-                map.addLayers([temp]);
-                WMSlayers[i] = temp;
-                }
             map.addLayers([footprints]);
             map.zoomToExtent(footprints.getDataExtent());
-            
-            // DTM
-            dtm = data['dtm'];
-            for(var i = 0; i < dtm.length; i++)
-                {
-                $('#choosedtm').append("<option value='" + dtm[i].collection + "'>" + dtm[i].name + "</option>");
-                }
-            $('#choosedtm').change(function()
-                {
-                if($('#choosedtm').val() != '')
-                    {
-                    if($('#choosedtm').val() == 'mola')
-                        {
-                        // clone dtmdefault into dtmdataset
-                        // dtmdataset = dtmdefault; doesnt work.
-                        dtmdataset = jQuery.extend({}, dtmdefault);
-                        }
-                    else
-                        {
-                        dtmdataset.collection = $('#choosedtm').val();
-                        dtm_load();
-                        }
-                    }
-                });
             }
         });
     }
 
+function loadregion(data)
+    {
+    // WMS
+    // Remove previously loaded WMS layers
+    for(var i = 0; i < WMSlayers.length; i++)
+        {
+        map.removeLayer(WMSlayers[i]);
+        }
+    // Add new WMS layers
+    wms = data['wms'];
+    for(var i = 0; i < wms.length; i++)
+        {
+        temp = new OpenLayers.Layer.MapServer(wms[i].name,
+            planetserver_ms_wms,
+            { map: wms[i].map, layers: wms[i].layer, projection: wms[i].projection},
+            {isBaseLayer: false, transitionEffect: 'resize'});
+        map.addLayers([temp]);
+        WMSlayers[i] = temp;
+        }
+    
+    // DTM
+    dtm = data['dtm'];
+    for(var i = 0; i < dtm.length; i++)
+        {
+        $('#choosedtm').append("<option value='" + dtm[i].collection + "'>" + dtm[i].name + "</option>");
+        }
+    $('#choosedtm').change(function()
+        {
+        if($('#choosedtm').val() != '')
+            {
+            if($('#choosedtm').val() == 'mola')
+                {
+                // clone dtmdefault into dtmdataset
+                // dtmdataset = dtmdefault; doesnt work.
+                dtmdataset = jQuery.extend({}, dtmdefault);
+                }
+            else
+                {
+                dtmdataset.collection = $('#choosedtm').val();
+                dtm_load();
+                }
+            }
+        });
+    }
+    
 function add_curiosity_location()
     {
     // CURIOSITY LANDING SITE
