@@ -92,7 +92,7 @@ function band2data(string)
     // http://stackoverflow.com/questions/504219/javascript-add-or-subtract-from-number-in-string
     string = string.replace(/band(\d+)/g, function(a,n)
         {
-        if(hsdataset.metadata.bbl[nm2band(n-1,1)] == 0)
+        if(hsdataset.metadata.bbl[n-1] == 0)
             {
             return "BAD";
             }
@@ -149,13 +149,21 @@ function image(string, tocstring)
             maxstretch = maxstr(datastring);
             }
         //min_value = minstr(datastring);
-        var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
+        if(minstretch == 0)
+            {
+            var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / ' + maxstretch + ') * (' + datastring + '), "png" )';
+            }
+        else
+            {
+            var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
+            }
         if($("#savecheck").attr('checked') == "checked")
             {
-            var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
-            var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
-            window.open(pngurl,"_parent");
-            window.open(pgwurl,"_blank");
+            wcpsquery = wcpsquery.replace("png","GTiff");
+            //var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            var gtiffurl = planetserver_wcps + '/' + filename + '?query=' + encodeURIComponent(wcpsquery);
+            window.open(gtiffurl,"_blank");
+            //window.open(pgwurl,"_parent");
             }
         else
             {
@@ -239,13 +247,21 @@ function rgbimage(red,green,blue)
         //mingreen_value = minstr(green);
         maxblue_value = maxstr(blue);
         //minblue_value = minstr(blue);
-        wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char){ red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + ')}, "png" )';
+        if(minstretch == 0)
+            {
+            wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) {red: (char) (255 / ' + maxred_value + ') * (' + red + '); green: (char) (255 / ' + maxgreen_value + ') * (' + green + '); blue: (char) (255 / ' + maxblue_value + ') * (' + blue + ')}, "png" )';
+            }
+        else
+            {
+            wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) {red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + ')}, "png" )';
+            }
         if($("#savecheck").attr('checked') == "checked")
             {
-            var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
-            var pngurl = 'wcps.php?use=png&filename=wcps.png&query=' + encodeURIComponent(wcpsquery);
-            window.open(pngurl,"_parent");
-            window.open(pgwurl,"_blank");
+            wcpsquery = wcpsquery.replace("png","GTiff");
+            //var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            var gtiffurl = planetserver_wcps + '/' + filename + '?query=' + encodeURIComponent(wcpsquery);
+            window.open(gtiffurl,"_blank");
+            //window.open(pgwurl,"_parent");
             }
         else
             {

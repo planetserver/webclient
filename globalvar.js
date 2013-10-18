@@ -150,6 +150,7 @@ var colors = [ "Red", "Green", "Blue", "#6500bb", "Magenta", "Pink", "Gray", "Br
 var pointsize = 0.0024;
 var minstretch = 0;
 var maxstretch = 0;
+var filename = "image";
 
 // Fixed variables
 var planetserver_ps_wms = "http://planetserver.jacobs-university.de:8080/petascope/wms";
