@@ -123,6 +123,26 @@ var regions = {
         'dtm':[]}
 };
 
+/*,
+    'schiaparelli':
+        {'id': 'schiaparelli',
+        'name': 'Schiaparelli crater',
+        'westernlon': 12,
+        'easternlon': 21.5,
+        'minlat': -7,
+        'maxlat': 2,
+        'wms':[],
+        'dtm':[]},
+    'aramchaos':
+        {'id': 'aramchaos',
+        'name': 'Aram Chaos',
+        'westernlon': -24,
+        'easternlon': -18,
+        'minlat': -0.5,
+        'maxlat': 6,
+        'wms':[],
+        'dtm':[]}*/
+
 // JSON for currently loaded elevation dataset, default 'moladtm'.
 dtmdataset = {}
 dtmdataset = jQuery.extend({}, dtmdefault);

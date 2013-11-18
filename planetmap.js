@@ -46,11 +46,6 @@ function initmap()
                 units: 'degrees',
                 maxExtent: maxextent});
     map.addControl(new OpenLayers.Control.ScaleLine({geodesic: true}));
-    map.events.register("mousemove", map, function(e)
-        {
-        var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
-        hsdataset.lonlat = map.getLonLatFromPixel(pixel);
-        });
 
     // A fake base layer
     var baseLayerOptions = {

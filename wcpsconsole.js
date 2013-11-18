@@ -116,6 +116,10 @@ function csv(string)
     var collection = hsdataset.collection;
     var wcpsquery = 'for data in ( ' + collection + ' ) return encode( ' + string + '), "csv" )';
     var url = 'wcps.php?use=csv&query=' + wcpsquery.replace(/\+/g, '%2B');
+    /* TODO:
+    var url = planetserver_wcps + '?query=' + encodeURIComponent(wcpsquery);
+    But also convert the wcps.php?use=csv code to JS
+    */
     return JSON.parse(getBinary(url));
     }
 function worldfile()
@@ -149,25 +153,25 @@ function image(string, tocstring)
             maxstretch = maxstr(datastring);
             }
         //min_value = minstr(datastring);
-        if(minstretch == 0)
-            {
-            var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / ' + maxstretch + ') * (' + datastring + '), "png" )';
-            }
-        else
-            {
-            var wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png" )';
-            }
+        var startwcps = 'for data in ( ' + collection + ' ) return encode(';
         if($("#savecheck").attr('checked') == "checked")
             {
-            wcpsquery = wcpsquery.replace("png","GTiff");
-            //var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            var wcpsquery = startwcps + ' (float) ' + datastring + ', "GTiff", "NODATA=65535")';
             var gtiffurl = planetserver_wcps + '/' + filename + '?query=' + encodeURIComponent(wcpsquery);
             window.open(gtiffurl,"_blank");
             //window.open(pgwurl,"_parent");
             }
         else
             {
-            var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
+            if(minstretch == 0)
+                {
+                var wcpsquery = startwcps + ' (char) (255 / ' + maxstretch + ') * (' + datastring + '), "png", "NODATA=255")';
+                }
+            else
+                {
+                var wcpsquery = startwcps + ' (char) (255 / (' + maxstretch + ' - ' + minstretch + ')) * ((' + datastring + ') - ' + minstretch + '), "png", "NODATA=255" )';
+                }
+            var pngurl = planetserver_wcps + '?query=' + encodeURIComponent(wcpsquery);
             var i = PNGimages.length;
             var temp = {};
             temp.type = "greyscale";
@@ -247,25 +251,25 @@ function rgbimage(red,green,blue)
         //mingreen_value = minstr(green);
         maxblue_value = maxstr(blue);
         //minblue_value = minstr(blue);
-        if(minstretch == 0)
-            {
-            wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) {red: (char) (255 / ' + maxred_value + ') * (' + red + '); green: (char) (255 / ' + maxgreen_value + ') * (' + green + '); blue: (char) (255 / ' + maxblue_value + ') * (' + blue + ')}, "png" )';
-            }
-        else
-            {
-            wcpsquery = 'for data in ( ' + collection + ' ) return encode( (char) {red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + ')}, "png" )';
-            }
+        var startwcps = 'for data in ( ' + collection + ' ) return encode(';
         if($("#savecheck").attr('checked') == "checked")
             {
-            wcpsquery = wcpsquery.replace("png","GTiff");
-            //var pgwurl = 'wcps.php?use=export&filename=wcps.pgw&data=' + encodeURIComponent(worldfile());
+            wcpsquery = startwcps + ' {red: (float) ' + red + '; green: (float) ' + green + '; blue: (float) ' + blue + '}, "GTiff", "NODATA=65535;65535;65535" )';
             var gtiffurl = planetserver_wcps + '/' + filename + '?query=' + encodeURIComponent(wcpsquery);
             window.open(gtiffurl,"_blank");
             //window.open(pgwurl,"_parent");
             }
         else
             {
-            var pngurl = 'wcps.php?use=png&query=' + wcpsquery.replace(/\+/g, '%2B');
+            if(minstretch == 0)
+                {
+                wcpsquery = startwcps + ' {red: (char) (255 / ' + maxred_value + ') * (' + red + '); green: (char) (255 / ' + maxgreen_value + ') * (' + green + '); blue: (char) (255 / ' + maxblue_value + ') * (' + blue + ')}, "png", "NODATA=255;255;255" )';
+                }
+            else
+                {
+                wcpsquery = startwcps + ' {red: (char) (255 / (' + maxred_value + ' - ' + minstretch + ')) * ((' + red + ') - ' + minstretch + '); green: (char) (255 / (' + maxgreen_value + ' - ' + minstretch + ')) * ((' + green + ') - ' + minstretch + '); blue: (char) (255 / (' + maxblue_value + ' - ' + minstretch + ')) * ((' + blue + ') - ' + minstretch + ')}, "png", "NODATA=255;255;255" )';
+                }
+            var pngurl = planetserver_wcps + '?query=' + encodeURIComponent(wcpsquery);
             var i = PNGimages.length;
             var temp = {};
             temp.type = "RGB";
@@ -423,13 +427,16 @@ function show(dict)
 
 function p(i)
     {
+    var string = "";
+    if(typeof(hsdataset.ratio_divisor) != "undefined")
+        {
+        string = string + "Ratio: " + hsdataset.ratio_divisor.lonlat + "\n"
+        }
     if(i == null)
         {
-        var string = "";
         for (var key in hsdataset.point)
             {
-            count = parseInt(key) + 1;
-            string = string + "Point" + (count) + ": " + hsdataset.point[key].lonlat + "\n"
+            string = string + "Spectrum " + colors[parseInt(key)] + ": " + hsdataset.point[key].lonlat + "\n"
             }
         return string;
         }
@@ -672,12 +679,57 @@ function getz(lon,lat)
     elevation = JSON.parse(getBinary(url));
     alert(elevation.data);
     }
+function noratio()
+    {
+    vector_layer2.destroyFeatures();
+    delete hsdataset.ratio_divisor;
+    }
+function loadmetadata()
+    {
+    var meanlist = [];
+    var stddevlist = [];
+    var minlist = [];
+    var maxlist = [];
+    for(var i = 0; i < hsdataset.metadata.mean.length; i++){
+        var wavelength = hsdataset.metadata.wavelength[i];
+        meanlist.push([wavelength, hsdataset.metadata.mean[i]]);
+        stddevlist.push([wavelength, hsdataset.metadata.stddev[i]]);
+        minlist.push([wavelength, hsdataset.metadata.minimum[i]]);
+        maxlist.push([wavelength, hsdataset.metadata.maximum[i]]);
+    }
+    spectrum_load([meanlist,stddevlist,minlist,maxlist],["Black","Red","Green","Blue"],"Black:Mean, Red:Stddev, Green:Min, Blue:Max");
+    }
+function resetspectra()
+    {
+    spectrum_load([[0]],["Black"],"");
+    pos = 0;
+    full = 0;
+    hsdataset.point = [];
+    vector_layer.destroyFeatures();
+    noratio();
+    loadmetadata();
+    }
 function addspectrum(lon,lat)
     {
     if((lon === undefined) && (lon === undefined)) {
         var lon = hsdataset.lonlat.lon;
         var lat = hsdataset.lonlat.lat;
     }
+    // The following code is also used by fire(e) in planetmap.events.js
+    if(getxspectrum(lon,lat))
+        {
+        var origin = {x:lon, y:lat}; 
+        var circleout = new OpenLayers.Geometry.Polygon.createRegularPolygon(origin, pointsize, 50);
+        var circle = new OpenLayers.Feature.Vector(circleout, {fcolor: colors[pos]});
+        vector_layer.addFeatures(circle);
+        pos++;
+        if (pos == nrclicks) {
+            pos = 0; // wrap around
+        }
+        }
+    }
+function getxspectrum(lon,lat)
+    {
     var collection = hsdataset.collection;
     var xmin = hsdataset.xmin;
     var xmax = hsdataset.xmax;
@@ -704,15 +756,43 @@ function addspectrum(lon,lat)
             
             var avgspectrum = avgbin(spectrabin);
             var values = [];
-            for(var i = 0; i < avgspectrum.length; i++){
-                var wavelength = hsdataset.metadata.wavelength[i];
-                if(avgspectrum[i] != hsdataset.nodata){
-                    values.push([wavelength,avgspectrum[i]]);
+            if(hsdataset.ratio_divisor === undefined)
+                {
+                for(var i = 0; i < avgspectrum.length; i++){
+                    var wavelength = hsdataset.metadata.wavelength[i];
+                    if(avgspectrum[i] != hsdataset.nodata){
+                        values.push([wavelength,avgspectrum[i]]);
+                    }
+                    else {
+                        values.push([wavelength,null]);
+                    }
                 }
-                else {
-                    values.push([wavelength,null]);
                 }
-            }
+            else
+                {
+                for(var i = 0; i < avgspectrum.length; i++){
+                    var wavelength = hsdataset.metadata.wavelength[i];
+                    if((hsdataset.ratio_divisor.divisor[i] == null) || (avgspectrum[i] == null))
+                        {
+                        values.push([wavelength,null])
+                        }
+                    else
+                        {
+                        var ratio = parseFloat(avgspectrum[i],10)/parseFloat(hsdataset.ratio_divisor.divisor[i],10);
+                        if(ratio > 10)
+                            {
+                            values.push([wavelength,null])
+                            }
+                        else
+                            {
+                            values.push([wavelength,ratio])
+                            }
+                        }
+                }
+                }
+            hsdataset.values = values;
+            spectrum_load([values],["#4bb2c5"],hsdataset.collection);
+            
             var locdata = {}
             var lonlat = new OpenLayers.LonLat(lon, lat);
             locdata.lonlat = lonlat;
@@ -744,10 +824,22 @@ function addspectrum(lon,lat)
         return false;
         }
     }
-function ratiospectra(lon,lat)
+function chooseratio(lon,lat)
     {
-    full = 0;
-    pos = 0; // reset full and position as well
+    if((lon === undefined) && (lon === undefined)) {
+        var lon = hsdataset.lonlat.lon;
+        var lat = hsdataset.lonlat.lat;
+    }
+    vector_layer2.destroyFeatures(); // destroy the points from the series
+    if(getyspectrum(lon,lat))
+        {
+        var origin = {x:lon, y:lat}; 
+        var circleout = new OpenLayers.Geometry.Polygon.createRegularPolygon(origin, pointsize, 50);
+        vector_layer2.addFeatures(new OpenLayers.Feature.Vector(circleout)); 
+        }
+    }
+function getyspectrum(lon,lat)
+    {
     var collection = hsdataset.collection;
     var xmin = hsdataset.xmin;
     var xmax = hsdataset.xmax;
@@ -768,42 +860,24 @@ function ratiospectra(lon,lat)
         var spectrabin = getbin(response);
         if(spectrabin != -1)
             {
-            if (turn == 1) { // this is our second set of data needed for spectral ratio
-                var avgspectrum = avgbin(spectrabin);
-                var values = [];
-                for(var i = 0; i < avgspectrum.length; i++){
-                    var wavelength = hsdataset.metadata.wavelength[i];
-                    // if(avgspectrum[i] != hsdataset.nodata){
-                        // values.push([wavelength,parseFloat(hsdataset.resp_data[i],10)/parseFloat(avgspectrum[i],10)]);
-                    // }
-                    // else {
-                        // values.push([wavelength,null]);
-                    // }
-                    if((hsdataset.resp_data[i] == null) || (avgspectrum[i] == null))
-                        {
-                        values.push([wavelength,null])
-                        }
-                    else
-                        {
-                        var ratio = parseFloat(hsdataset.resp_data[i],10)/parseFloat(avgspectrum[i],10);
-                        if(ratio > 10)
-                            {
-                            values.push([wavelength,null])
-                            }
-                        else
-                            {
-                            values.push([wavelength,ratio])
-                            }
-                        }
+            var avgspectrum = avgbin(spectrabin);
+            var values = [];
+            for(var i = 0; i < avgspectrum.length; i++){
+                var wavelength = hsdataset.metadata.wavelength[i];
+                if(avgspectrum[i] != hsdataset.nodata){
+                    values.push([wavelength,avgspectrum[i]]);
                 }
-                hsdataset.values = values;
-                spectrum_load([values],["#4bb2c5"],hsdataset.collection);
-                turn = 0; // reset turn to 0
+                else {
+                    values.push([wavelength,null]);
+                }
             }
-            else { // turn is equal to 0
-                turn++; // increase turn count
-                hsdataset.resp_data = avgbin(spectrabin); // to keep track of the first set of data
-            }
+            var locdata = {}
+            var lonlat = new OpenLayers.LonLat(lon, lat);
+            locdata.lonlat = lonlat;
+            locdata.spectrum = values;
+            locdata.divisor = avgspectrum;
+            hsdataset.ratio_divisor = locdata;
+            spectrum_load([values],["#4bb2c5"],hsdataset.collection);
             return true;
             }
         else

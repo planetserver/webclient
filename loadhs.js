@@ -1,5 +1,6 @@
-function hyperspectral_load()
+function hyperspectral_load(consolestring)
     {
+    consolestring = (typeof consolestring === "undefined") ? "" : consolestring;
     showLoader();
     initmetadata(); //metadata.js
     
@@ -30,8 +31,7 @@ function hyperspectral_load()
     // similar code can be found in wcpsconsole: image() and rgbimage()
     datastring = 'data.' + parseInt(hsdataset.bands/2);
     max_value = maxstr(datastring);
-    min_value = minstr(datastring);
-    var wcpsquery = 'for data in ( ' + hsdataset.collection + ' ) return encode( (char) (255 / (' + max_value + ' - ' + min_value + ')) * ((' + datastring + ') - ' + min_value + '), "png", "NODATA=255;" )';
+    var wcpsquery = 'for data in ( ' + hsdataset.collection + ' ) return encode( (char) (255 / ' + max_value + ') * (' + datastring + '), "png", "NODATA=255;" )';
     var pngurl = planetserver_wcps + '?query=' + wcpsquery;
     var i = PNGimages.length;
     var temp = {};
@@ -56,12 +56,13 @@ function hyperspectral_load()
     // hsdataset.metadata.min
     // hsdataset.metadata.max
     // hsdataset.metadata.stddev
-    var numbers = [];
+    /*var numbers = [];
     for(var i = 0; i < hsdataset.metadata.mean.length; i++){
         var wavelength = hsdataset.metadata.wavelength[i];
         numbers.push([wavelength, hsdataset.metadata.mean[i]]);
     }
-    spectrum_load([numbers],["#000000"],hsdataset.collection);
+    spectrum_load([numbers],["#000000"],hsdataset.collection);*/
+    loadmetadata();
     //
     
     inithsmapevents(); //planetmap.events.js
@@ -71,6 +72,10 @@ function hyperspectral_load()
     inittocevents(); //toc.js
     hideLoader();
     spectra.replot();
+    if(consolestring != "")
+        {
+        eval(consolestring);
+        }
 }
 
 function initloadhs()

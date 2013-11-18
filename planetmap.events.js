@@ -61,6 +61,13 @@ function toggleQueryMode4()
     }
 function initmapevents()
     {
+    // Used by addspectrum() and chooseratio() in the console
+    map.events.register("mousemove", map, function(e)
+        {
+        var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
+        hsdataset.lonlat = map.getLonLatFromPixel(pixel);
+        });
+    
     zoomBox = new OpenLayers.Control.ZoomBox({ title: "Zoom in box" });
     navHistory = new OpenLayers.Control.NavigationHistory();  
     navHistory.previous.title = "View history backward";
@@ -174,8 +181,8 @@ function initmapevents()
         var lonlat = map.getLonLatFromPixel(e.xy);
         var lon = lonlat.lon;
         var lat = lonlat.lat;
-        vector_layer2.destroyFeatures(); // destroy the points from spectral ratio
-        if(addspectrum(lon,lat))
+        //vector_layer2.destroyFeatures(); // destroy the points from spectral ratio
+        if(getxspectrum(lon,lat))
             {
             var origin = {x:lon, y:lat}; 
             var circleout = new OpenLayers.Geometry.Polygon.createRegularPolygon(origin, pointsize, 50);
@@ -193,8 +200,8 @@ function initmapevents()
         var lonlat = map.getLonLatFromPixel(e.xy);
         var lon = lonlat.lon;
         var lat = lonlat.lat;
-        vector_layer.destroyFeatures(); // destroy the points from the series
-        if(ratiospectra(lon,lat))
+        vector_layer2.destroyFeatures(); // destroy the points from the series
+        if(getyspectrum(lon,lat))
             {
             var origin = {x:lon, y:lat}; 
             var circleout = new OpenLayers.Geometry.Polygon.createRegularPolygon(origin, pointsize, 50);

@@ -28,7 +28,12 @@ function checksinglecollection()
         hsdataset.productid = QueryString.productid.toLowerCase();
         hsdataset.collection = hsdataset.productid + "_" + pcversion + "_" + ptversion;
         hsdataset.nodata = 65535;
-        hyperspectral_load();
+        consolestring = "";
+        if(typeof(QueryString.console) != "undefined")
+            {
+            consolestring = decodeURIComponent(QueryString.console);
+            }
+        hyperspectral_load(consolestring);
         }
     }
 function checkregion()

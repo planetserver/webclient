@@ -106,7 +106,7 @@ function inittocevents()
     });
     $("#greyquery").click(function(e) {
         var calc;
-        if($('.selected2').html() == "Bands")
+        if($('.selected2').html() == "Bands&nbsp;")
             {
             calc = $('#bandselect').val();
             }

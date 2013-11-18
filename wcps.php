@@ -61,7 +61,7 @@ else
         $im = imagecreatefromstring($result);
         $w = imagesx($im); // image width
         $h = imagesy($im); // image height
-        // Check the UL,UR,LL,LR corner colour values and chose the most occuring color:
+        // Check the UL,UR,LL,LR corner colour values and chose the most occurring color:
         $ul = imagecolorat($im, 1, 1);
         $ur = imagecolorat($im, 1, $h - 1);
         $ll = imagecolorat($im, $w - 1, 1);
@@ -275,8 +275,8 @@ else
         $querywidth = 'for data in ( '.$collection.' ) return imageCrsDomain(data,x)';
         $queryheight = 'for data in ( '.$collection.' ) return imageCrsDomain(data,y)';
         $querybands = 'for data in ( '.$collection.' ) return encode( data[x:"CRS:1"(0:0),y:"CRS:1"(0:0)], "csv" )';
-        $queryexx = 'for data in ( '.$collection.' ) return domain(data,x,"http://www.opengis.net/def/crs/EPSG/0/4326")';
-        $queryexy = 'for data in ( '.$collection.' ) return domain(data,y,"http://www.opengis.net/def/crs/EPSG/0/4326")';
+        $queryexx = 'for data in ( '.$collection.' ) return domain(data,x,"http://kahlua.eecs.jacobs-university.de:8080/def/crs/PS/0/1/")';
+        $queryexy = 'for data in ( '.$collection.' ) return domain(data,y,"http://kahlua.eecs.jacobs-university.de:8080/def/crs/PS/0/1/")';
         
         // CURL execute:
         $post_string = 'query=' . $querywidth;
