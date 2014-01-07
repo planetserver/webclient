@@ -48,8 +48,8 @@
         <script src='gui.js' type='text/javascript'></script>
 		<script src='planetmap.js' type='text/javascript'></script>
 		<script src='planetmap.events.js' type='text/javascript'></script>
+        <script src='diagram.js' type='text/javascript'></script>
         <script src='wcpsconsole.js' type='text/javascript'></script>
-        <script src='spectrallibrary.js' type='text/javascript'></script>
 		<script src='toc.js' type='text/javascript'></script>
 		<script src='metadata.js' type='text/javascript'></script>
 		<script src='summaryproducts.js' type='text/javascript'></script>
@@ -114,7 +114,7 @@
 			    <div class="tab-content1" id="tabs14"><div id="data">TBA</div></div>
 			</div>
 		</div>
-		<div id="vnirorir" style="display:none">
+		<!--<div id="vnirorir" style="display:none">
 			<div id="title-wrapper">
 				<div id="title">CHOOSE CRISM TYPE</div>
 			</div>
@@ -126,7 +126,7 @@
 		        <a href="javascript:void(0)" style="float:right;right:5px;">IR: <input type="radio" name="vnirorircheck" id="ircheck" checked="yes"/></a>
 		        <input type="button" name="vnirorirselect" id="vnirorirselect" value="OK" />
             </div>
-		</div>
+		</div>-->
 		<div id="tutorial" style="display:none">
 			<div id="title-wrapper">
 				<div id="title">TUTORIAL</div>
@@ -219,7 +219,7 @@
 				<a href="javascript:void(0)" onclick="toggleDisplay('query')">X</a>
 			</div></br></br>
 			<div id="console" class="console"></div></br>
-            <a href="javascript:void(0)">Save for GIS: <input type="checkbox" id="savecheck" /></a>
+            <a href="javascript:void(0)" style="float:left">VNIR <input type="radio" name="checkhstype" onclick="vnir()"></a>&nbsp;<a href="javascript:void(0)" style="float:left">IR<input type="radio" name="checkhstype" onclick="ir()" checked></a>&nbsp;<a href="javascript:void(0)">Save for GIS: <input type="checkbox" id="savecheck" /></a>
 		</div>
 		<!--LayerList>
 			<Layer>

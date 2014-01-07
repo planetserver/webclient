@@ -7,24 +7,24 @@ var curiosity;
 
 function dtm_load()
     {
-    // $("#x3d").css(
-    // {
-        // 'display': ''
-    // });
-    $("#spectra").css(
+    /*$("#spectra").css(
     {
         'display': ''
     });
-    switch_tabs($('.crosstab'));
-    //crossdiagram([[0,0,0,0,0,0,0,0,0]]); // a test plot
-    
-    data = JSON.parse(getBinary('wcps.php?use=metadata&collection=' + dtmdataset.collection));
-    dtmdataset.xmin = data.xmin;
-    dtmdataset.xmax = data.xmax;
-    dtmdataset.ymin = data.ymin;
-    dtmdataset.ymax = data.ymax;
-    dtmdataset.width = data.width;
-    dtmdataset.height = data.height;
+    switch_tabs($('.crosstab'));*/
+    dtm = regions[region].dtm;
+    for(var i = 0; i < dtm.length; i++)
+        {
+        if(dtm[i].collection == dtmdataset.collection)
+            {
+            dtmdataset.xmin = dtm[i].xmin;
+            dtmdataset.xmax = dtm[i].xmax;
+            dtmdataset.ymin = dtm[i].ymin;
+            dtmdataset.ymax = dtm[i].ymax;
+            dtmdataset.width = dtm[i].width;
+            dtmdataset.height = dtm[i].height;
+            }
+        }
     }
 
 function loadmrdr(productid)
@@ -45,9 +45,9 @@ function loadmrdr(productid)
     
 function initloadregion()
     {
-    for(region in regions)
+    for(item in regions)
         {
-        $("#chooseregion").append("<option value='" + region + "'>" + regions[region].name + "</option>");
+        $("#chooseregion").append("<option value='" + item + "'>" + regions[item].name + "</option>");
         }
     
     $('#chooseregion').change(function()
@@ -88,6 +88,7 @@ function loadregion(data)
     dtm = data['dtm'];
     for(var i = 0; i < dtm.length; i++)
         {
+        // CHECK if option already exists
         $('#choosedtm').append("<option value='" + dtm[i].collection + "'>" + dtm[i].name + "</option>");
         }
     $('#choosedtm').change(function()
@@ -103,7 +104,7 @@ function loadregion(data)
             else
                 {
                 dtmdataset.collection = $('#choosedtm').val();
-                dtm_load();
+                dtm_load($('#choosedtm').val());
                 }
             }
         });
@@ -218,11 +219,18 @@ function getODEfootprints(name,westernlon,easternlon,minlat,maxlat)
     selectCtrl = new OpenLayers.Control.SelectFeature(footprints, {
         clickout: true,
         onSelect: function(feature) {
-                hsdataset.productid = feature.data["pdsid"];
-                toggleDisplay('vnirorir');
+            footprints.setVisibility(false);
+            hsdataset.vnir.productid = feature.data["pdsid"].toLowerCase().replace("l_","s_");
+            hsdataset.vnir.collection = hsdataset.vnir.productid + "_" + pcversion + "_" + ptversion;
+            hsdataset.ir.productid = feature.data["pdsid"].toLowerCase().replace("s_","l_");
+            hsdataset.ir.collection = hsdataset.ir.productid + "_" + pcversion + "_" + ptversion;
+            hyperspectral_load();
             },
         onUnselect: function(feature) {
-                hsdataset.productid = "";
+            hsdataset.vnir.productid = "";
+            hsdataset.vnir.collection = "";
+            hsdataset.ir.productid = "";
+            hsdataset.ir.collection = "";
             }
         }
     );

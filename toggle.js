@@ -6,7 +6,7 @@ function toggleDisplay(e) {
   else {
     document.getElementById(e).style.display = "none";
   }
-  if(e == "bandselect") {
+  if(e == "vnirbandselect") {
   	if ($("#special").attr('src') == "images/collapse.png") {
   		$("#special").attr("src","images/expand.png");
   	}

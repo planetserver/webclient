@@ -44,38 +44,22 @@ function initconsole()
     });
     controller.promptText('');
     }
-function min(calculation)
+function min(string)
     {
-    calculation = minstr(calculation);
-    var data = csv(calculation);
-    return parseFloat(data.data);
+    string = minstr(string);
+    collection = hsdataset[hstype].collection;
+    wcpsquery = 'for data in ( ' + collection + ' ) return encode( ' + string + '), "csv" )';
+    value = getwcpsvalue(wcpsquery);
+    return parseFloat(value);
     }
-function max(calculation)
+function max(string)
     {
-    calculation = maxstr(calculation);
-    var data = csv(calculation);
-    return parseFloat(data.data);
+    string = maxstr(string);
+    collection = hsdataset[hstype].collection;
+    wcpsquery = 'for data in ( ' + collection + ' ) return encode( ' + string + '), "csv" )';
+    value = getwcpsvalue(wcpsquery);
+    return parseFloat(value);
     }
-// RASDAMAN COMMUNITY VERSIONS
-// function minstr(calculation)
-    // {
-    // calculation = band2data(calculation.toString());
-    // var nodata = hsdataset.nodata;
-    // if(nodata > 0)
-        // {
-        // return 'min(' + calculation + ')';
-        // }
-    // else
-        // {
-        // return 'min(((' + calculation + ')=' + nodata + ') * ((' + calculation + ') + 1) + ((' + calculation + ')!=' + nodata + ') *  (' + calculation + '))';
-        // }
-    // }
-// function maxstr(calculation)
-    // {
-    // calculation = band2data(calculation.toString());
-    // var nodata = hsdataset.nodata;
-    // return 'max(((' + calculation + ')!=' + nodata + ') * (' + calculation + '))';
-    // }
 function maxstr(calculation)
     {
     calculation = band2data(calculation.toString());
@@ -92,7 +76,7 @@ function band2data(string)
     // http://stackoverflow.com/questions/504219/javascript-add-or-subtract-from-number-in-string
     string = string.replace(/band(\d+)/g, function(a,n)
         {
-        if(hsdataset.metadata.bbl[n-1] == 0)
+        if(hsdataset[hstype].metadata.bbl[n-1] == 0)
             {
             return "BAD";
             }
@@ -113,30 +97,25 @@ function band2data(string)
 function csv(string)
     {
     string = band2data(string.toString());
-    var collection = hsdataset.collection;
+    var collection = hsdataset[hstype].collection;
     var wcpsquery = 'for data in ( ' + collection + ' ) return encode( ' + string + '), "csv" )';
-    var url = 'wcps.php?use=csv&query=' + wcpsquery.replace(/\+/g, '%2B');
-    /* TODO:
+    //var url = 'wcps.php?use=csv&query=' + wcpsquery.replace(/\+/g, '%2B');
     var url = planetserver_wcps + '?query=' + encodeURIComponent(wcpsquery);
-    But also convert the wcps.php?use=csv code to JS
-    */
-    return JSON.parse(getBinary(url));
+    csvstring = getBinary(url);
+    csvstring = csvstring.replaceAll('{','[');
+    csvstring = csvstring.replaceAll('}',']');
+    csvstring = '{"data": [' + csvstring + ']}';
+    return JSON.parse(csvstring);
     }
-function worldfile()
+/*function worldfile()
     {
-    xres = Math.abs((hsdataset.xmax - hsdataset.xmin) / hsdataset.width);
-    yres = Math.abs((hsdataset.ymax - hsdataset.ymin) / hsdataset.height);
-    ulx = hsdataset.xmin + (0.5 * xres);
-    uly = hsdataset.ymax - (0.5 * yres);
+    xres = Math.abs((hsdataset[hstype].xmax - hsdataset[hstype].xmin) / hsdataset[hstype].width);
+    yres = Math.abs((hsdataset[hstype].ymax - hsdataset[hstype].ymin) / hsdataset[hstype].height);
+    ulx = hsdataset[hstype].xmin + (0.5 * xres);
+    uly = hsdataset[hstype].ymax - (0.5 * yres);
     yres = -yres;
     return xres + "\n0\n0\n" + yres + "\n" + ulx + "\n" + uly;
-    }
-// function urlencode(string)
-    // {
-    // string = string.replace(/\+/g, '%2B');
-    // string = string.replace(/\n/g, '%0A');
-    // return string;
-    // }
+    }*/
 function image(string, tocstring)
     {
     tocstring = (typeof tocstring === "undefined") ? "" : tocstring;
@@ -147,7 +126,7 @@ function image(string, tocstring)
     datastring = band2data(string.toString());
     if(datastring != -1)
         {
-        var collection = hsdataset.collection;
+        var collection = hsdataset[hstype].collection;
         if(maxstretch == 0)
             {
             maxstretch = maxstr(datastring);
@@ -186,11 +165,13 @@ function image(string, tocstring)
                 temp.string = checkpredef(string);
                 }
             imagedata[i] = temp;
+            bbox = new OpenLayers.Bounds(hsdataset[hstype].xmin, hsdataset[hstype].ymin, hsdataset[hstype].xmax, hsdataset[hstype].ymax);
+            bbox.transform(new OpenLayers.Projection('PS:2?0'), new OpenLayers.Projection('PS:1'));
             PNGimages[i] = new OpenLayers.Layer.Image(
                 string,
                 'data:image/png;base64,' + temp.base64,
-                hsdataset.bbox,
-                new OpenLayers.Size(hsdataset.width, hsdataset.height),
+                bbox,
+                new OpenLayers.Size(hsdataset[hstype].width, hsdataset[hstype].height),
                 hsdataset.mapoptions
                 );
             map.addLayers([PNGimages[i]]);
@@ -244,7 +225,7 @@ function rgbimage(red,green,blue)
     blue = band2data(blue.toString());
     if((red != -1) || (green != -1) || (blue != -1))
         {
-        var collection = hsdataset.collection;
+        var collection = hsdataset[hstype].collection;
         maxred_value = maxstr(red);
         //minred_value = minstr(red);
         maxgreen_value = maxstr(green);
@@ -277,11 +258,13 @@ function rgbimage(red,green,blue)
             temp.wcps = wcpsquery;
             temp.string = checkpredef(red) + ";" + checkpredef(green) + ";" + checkpredef(blue);
             imagedata[i] = temp;
+            bbox = new OpenLayers.Bounds(hsdataset[hstype].xmin, hsdataset[hstype].ymin, hsdataset[hstype].xmax, hsdataset[hstype].ymax);
+            bbox.transform(new OpenLayers.Projection('PS:2?0'), new OpenLayers.Projection('PS:1'));
             PNGimages[i] = new OpenLayers.Layer.Image(
                 "RGB",
                 'data:image/png;base64,' + temp.base64,
-                hsdataset.bbox,
-                new OpenLayers.Size(hsdataset.width, hsdataset.height),
+                bbox,
+                new OpenLayers.Size(hsdataset[hstype].width, hsdataset[hstype].height),
                 hsdataset.mapoptions
                 );
             map.addLayers([PNGimages[i]]);
@@ -311,70 +294,14 @@ function rgbimage(red,green,blue)
         return "You used bad band(s)!";
         }
     }
-function histogramtocsv(numbers)
-    {
-    string = "BIN,COUNT\n";
-    for(var i = 0; i < numbers.length; i++)
-        {
-        j = i + 1;
-        string = string + j + "," + numbers[i] + "\n";
-        }
-    return string;
-    }
-function histogram(string, nrbins)
-{
-    var nodata = hsdataset.nodata;
-    var collection = hsdataset.collection;
-    var wcpsstring = 'wcps.php?use=histogram&nrbins='+ nrbins +'&collection=' + collection + '&nodata=' + nodata + '&calc=' + string;
-    /*Change into BarDiagram.js???*/
-    // extract numbers from the query using regex
-    var numbers = getBinary(wcpsstring).match(/\d+\.?\d*/g);
-    // find the largest entry to determine the range of the plot
-    var n = Math.max.apply( null, numbers);
-    var mult = Math.pow(10, 2 - Math.floor(Math.log(n) / Math.LN10) - 1); //round to two s.f.
-    var n = Math.round(n * mult) / mult;
-    var largest = n * 1.1;
-    // Switch to HISTOGRAM TAB and then plot the histogram
-    diagramplot.histogram = numbers;
-    switch_tabs($('.histtab'));
-    $.jqplot.config.enablePlugins = true;
-    hist = $.jqplot('histPlace', [numbers], {
-         title: collection,
-         seriesDefaults:{
-             renderer: $.jqplot.BarRenderer,
-             rendererOptions: {
-                barMargin: 5
-            },
-            showMarker: false,
-            pointLabels: { show: false }
-        },
-        axes: {
-            xaxis: {
-                renderer:  $.jqplot.CategoryAxisRenderer,
-                pad: 0
-            },
-            yaxis: {
-                min: 0,
-                max: largest
-            }
-        },
-        highlighter: {
-            sizeAdjust: 7.5
-        },
-        cursor: {
-            show: false
-        }
-    });
-    hist.replot();
-}
 function lltoimagecrs(lon,lat)
     {
-    xmin = hsdataset.xmin;
-    xmax = hsdataset.xmax;
-    ymin = hsdataset.ymin;
-    ymax = hsdataset.ymax;
-    width = hsdataset.width;
-    height = hsdataset.height;
+    xmin = hsdataset[hstype].left;
+    xmax = hsdataset[hstype].right;
+    ymin = hsdataset[hstype].bottom;
+    ymax = hsdataset[hstype].top;
+    width = hsdataset[hstype].width;
+    height = hsdataset[hstype].height;
     if(inextent(lat,lon))
         {
         imx = (lon - xmin) * (width / (xmax - xmin));
@@ -388,27 +315,12 @@ function lltoimagecrs(lon,lat)
         return false;
         }
     }
-// function ll2imgcrs(lon,lat)
-    // {
-    // //CRS:1 0,0 is upper left
-    // var xmin = hsdataset.xmin;
-    // var xmax = hsdataset.xmax;
-    // var ymin = hsdataset.ymin;
-    // var ymax = hsdataset.ymax;
-    // var width = hsdataset.width;
-    // var height = hsdataset.height;
-    // var xa = Math.abs(xmax - xmin) / width;
-    // var ya = Math.abs(ymax - ymin) / height;
-    // var x = Math.floor(Math.abs(lon - xmin) / xa);
-    // var y = Math.floor(Math.abs(lat - ymax) / ya);
-    // return [x,y];
-    // }
 function inextent(lat,lon)
     {
-    xmin = hsdataset.xmin;
-    xmax = hsdataset.xmax;
-    ymin = hsdataset.ymin;
-    ymax = hsdataset.ymax;
+    xmin = hsdataset[hstype].left;
+    xmax = hsdataset[hstype].right;
+    ymin = hsdataset[hstype].bottom;
+    ymax = hsdataset[hstype].top;
     if((lon > xmin) && (lon < xmax) && (lat > ymin) && (lat < ymax))
         {
         return true;
@@ -468,48 +380,6 @@ function s(i)
             }
         }
     }
-function spectrum_load(numbers,colors,title)
-{
-    // Switch to SPECTRUM TAB and then plot the spectrum
-    switch_tabs($('.defaulttab'));
-    diagramplot.spectra = numbers;
-    $.jqplot.config.enablePlugins = true;
-    spectra = $.jqplot('chartPlace', numbers, {
-        title: title,
-        cursor: {
-            show: true,
-            zoom : true
-        },
-        highlighter : {
-            show : true
-        },
-        series: [{breakOnNull: true}],
-        seriesDefaults: {
-            renderer: $.jqplot.LineRenderer,
-            lineWidth: 1,
-            rendererOptions: {
-                smooth: true,
-                animation: {
-                    show: true
-                }
-            },
-            showMarker: false,
-            pointLabels: {
-                show: false
-            }
-        },
-        axes: {
-            xaxis: {
-                pad: 1.1
-            },
-            yaxis: {
-                pad: 1.1
-            }
-        },
-        seriesColors: colors
-    });
-    spectra.replot();
-}
 function spectrum_calc(string)
     {
     var cnt = 0;
@@ -547,7 +417,7 @@ function spectrum_calc(string)
                     {
                     out = null;
                     }
-                var wavelength = hsdataset.metadata.wavelength[i];
+                var wavelength = hsdataset[hstype].metadata.wavelength[i];
                 numbers.push([wavelength, out]);
                 }
             spectrum_load([numbers],["Red"]);
@@ -562,69 +432,19 @@ function spectrum_calc(string)
         return "s(" + cnt + ") isn't defined!";
         }
     }
-function spectrumtocsv(numbers)
+function histogram(string, nrbins)
     {
-    headerstring = "WAVELENGTH,";
-    for(var i = 0; i < numbers.length; i++)
+    if(nrbins === undefined)
         {
-        spectrumcolumn = "SPECTRUM" + (i + 1);
-        headerstring = headerstring + spectrumcolumn + ",";
+        nrbins = 10;
         }
-    string = headerstring + "\n";
-    for(var i = 0; i < numbers[0].length; i++)
-        {
-        string = string + numbers[0][i][0] + "," + numbers[0][i][1];
-        for(var j = 1; j < numbers.length; j++)
-            {
-            string = string + "," + numbers[j][i][1];
-            }
-        string = string + "\n";
-        }
-    return string;
-    }
-function crosssectiontocsv(numbers)
-    {
-    string = "METER,ELEVATION\n";
-    for(var i = 0; i < numbers[0].length; i++)
-        {
-        string = string + numbers[0][i][0] + "," + numbers[0][i][1] + "\n";
-        }
-    return string;
-    }
-function crossdiagram(numbers)
-    {
-    var nodata = dtmdataset.nodata;
-        
-    // Switch to CROSS TAB and then plot the cross diagram
-    switch_tabs($('.crosstab'));
-    diagramplot.crosssection = numbers;
-    $.jqplot.config.enablePlugins = true;
-    cross = $.jqplot('crossPlace', numbers, {
-        title: 'Cross Section',
-        cursor: {
-            show: true,
-            zoom : true
-        },
-        highlighter : {
-            show : true
-        },
-        series: [{breakOnNull: true}],
-        seriesDefaults: {
-            renderer: $.jqplot.LineRenderer,
-            lineWidth: 1,
-            rendererOptions: {
-                smooth: true,
-                animation: {
-                    show: true
-                }
-            },
-            showMarker: false,
-            pointLabels: {
-                show: false
-            }
-        }
-    });
-    cross.replot();
+    string = band2data(string.toString());
+    histmin = min(string);
+    histmax = max(string);
+    collection = hsdataset[hstype].collection;
+    wcpsquery = 'for data in ( ' + collection + ' ) return encode( coverage histogram over $n x(0:' + (nrbins - 1) + ') values count(' + string + ' >= ' + histmin + ' + $n*(' + histmax + ' - ' + histmin + ') / ' + nrbins + ' and ' + string + ' < ' + histmin + ' + (1+$n)*(' + histmax + ' - ' + histmin + ') / ' + nrbins + '), "csv" )'
+    var numbers = getwcpsvalue(wcpsquery).match(/\d+\.?\d*/g);
+    histdiagram(numbers);
     }
 function crosssection(lon1,lat1,lon2,lat2)
     {
@@ -634,7 +454,7 @@ function crosssection(lon1,lat1,lon2,lat2)
         // )
     // var datares = Math.abs((dtmdataset.xmax - dtmdataset.xmin) / dtmdataset.width);
     // var nrpoints = parseInt(gcdistance / datares);
-    var response = JSON.parse(getBinary('cgi-bin/greatcircle.cgi?nrpoints=' + nrpoints + '&lon1=' + lon1 + '&lat1=' + lat1 + '&lon2=' + lon2 + '&lat2=' + lat2));
+    var response = JSON.parse(getBinary('http://www.planetserver.eu/cgi-bin/greatcircle.cgi?nrpoints=' + nrpoints + '&lon1=' + lon1 + '&lat1=' + lat1 + '&lon2=' + lon2 + '&lat2=' + lat2));
     var values = [];
     for(var i = 0; i < nrpoints; i++)
         {
@@ -644,10 +464,8 @@ function crosssection(lon1,lat1,lon2,lat2)
               {lon: lon2, lat: lat2},
               {lon: lon, lat: lat}
             )
-        wcpsquery = 'for data in ( ' + dtmdataset.collection + ' ) return encode(  (data[x:"' + dtmdataset.crs + '"(' + lon + ':' + lon + '),y:"' + dtmdataset.crs + '"(' + lat + ':' + lat + ')]), "csv")';
-        url = 'wcps.php?use=csv&query=' + encodeURIComponent(wcpsquery);
-        elevation = JSON.parse(getBinary(url));
-        values.push([distancecount,parseFloat(elevation.data)]);
+        elevation = getz(lon,lat);
+        values.push([distancecount,parseFloat(elevation)]);
         }
     crossdiagram([values]);
     }
@@ -674,10 +492,13 @@ function crosssection(lon1,lat1,lon2,lat2)
     // }
 function getz(lon,lat)
     {
-    wcpsquery = 'for data in ( ' + dtmdataset.collection + ' ) return encode(  (data[x:"' + dtmdataset.crs + '"(' + lon + ':' + lon + '),y:"' + dtmdataset.crs + '"(' + lat + ':' + lat + ')]), "csv")';
-    url = 'wcps.php?use=csv&query=' + encodeURIComponent(wcpsquery);
-    elevation = JSON.parse(getBinary(url));
-    alert(elevation.data);
+    if((lon === undefined) && (lon === undefined)) {
+        var lon = maplonlat.lon;
+        var lat = maplonlat.lat;
+    }
+    var wcpsquery = 'for data in ( ' + dtmdataset.collection + ' ) return encode(  (data[x:"' + dtmdataset.crs + '"(' + lon + ':' + lon + '),y:"' + dtmdataset.crs + '"(' + lat + ':' + lat + ')]), "csv")';
+    value = getwcpsvalue(wcpsquery);
+    return value;
     }
 function noratio()
     {
@@ -690,12 +511,12 @@ function loadmetadata()
     var stddevlist = [];
     var minlist = [];
     var maxlist = [];
-    for(var i = 0; i < hsdataset.metadata.mean.length; i++){
-        var wavelength = hsdataset.metadata.wavelength[i];
-        meanlist.push([wavelength, hsdataset.metadata.mean[i]]);
-        stddevlist.push([wavelength, hsdataset.metadata.stddev[i]]);
-        minlist.push([wavelength, hsdataset.metadata.minimum[i]]);
-        maxlist.push([wavelength, hsdataset.metadata.maximum[i]]);
+    for(var i = 0; i < hsdataset[hstype].metadata.mean.length; i++){
+        var wavelength = hsdataset[hstype].metadata.wavelength[i];
+        meanlist.push([wavelength, hsdataset[hstype].metadata.mean[i]]);
+        stddevlist.push([wavelength, hsdataset[hstype].metadata.stddev[i]]);
+        minlist.push([wavelength, hsdataset[hstype].metadata.minimum[i]]);
+        maxlist.push([wavelength, hsdataset[hstype].metadata.maximum[i]]);
     }
     spectrum_load([meanlist,stddevlist,minlist,maxlist],["Black","Red","Green","Blue"],"Black:Mean, Red:Stddev, Green:Min, Blue:Max");
     }
@@ -712,8 +533,8 @@ function resetspectra()
 function addspectrum(lon,lat)
     {
     if((lon === undefined) && (lon === undefined)) {
-        var lon = hsdataset.lonlat.lon;
-        var lat = hsdataset.lonlat.lat;
+        var lon = maplonlat.lon;
+        var lat = maplonlat.lat;
     }
     // The following code is also used by fire(e) in planetmap.events.js
     if(getxspectrum(lon,lat))
@@ -730,11 +551,11 @@ function addspectrum(lon,lat)
     }
 function getxspectrum(lon,lat)
     {
-    var collection = hsdataset.collection;
-    var xmin = hsdataset.xmin;
-    var xmax = hsdataset.xmax;
-    var ymin = hsdataset.ymin;
-    var ymax = hsdataset.ymax;
+    var collection = hsdataset[hstype].collection;
+    var xmin = hsdataset[hstype].left;
+    var xmax = hsdataset[hstype].right;
+    var ymin = hsdataset[hstype].bottom;
+    var ymax = hsdataset[hstype].top;
     // if you click within the extent of the WCPS PNG:
     if((lon >= xmin) && (lon <= xmax) && (lat >= ymin) && (lat <= ymax))
         {
@@ -746,7 +567,7 @@ function getxspectrum(lon,lat)
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
         ymin = (imagey - i).toString();
-        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset.collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
+        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
         var spectrabin = getbin(response);
         if(spectrabin != -1)
             {
@@ -759,7 +580,7 @@ function getxspectrum(lon,lat)
             if(hsdataset.ratio_divisor === undefined)
                 {
                 for(var i = 0; i < avgspectrum.length; i++){
-                    var wavelength = hsdataset.metadata.wavelength[i];
+                    var wavelength = hsdataset[hstype].metadata.wavelength[i];
                     if(avgspectrum[i] != hsdataset.nodata){
                         values.push([wavelength,avgspectrum[i]]);
                     }
@@ -771,7 +592,7 @@ function getxspectrum(lon,lat)
             else
                 {
                 for(var i = 0; i < avgspectrum.length; i++){
-                    var wavelength = hsdataset.metadata.wavelength[i];
+                    var wavelength = hsdataset[hstype].metadata.wavelength[i];
                     if((hsdataset.ratio_divisor.divisor[i] == null) || (avgspectrum[i] == null))
                         {
                         values.push([wavelength,null])
@@ -791,7 +612,7 @@ function getxspectrum(lon,lat)
                 }
                 }
             hsdataset.values = values;
-            spectrum_load([values],["#4bb2c5"],hsdataset.collection);
+            //spectrum_load([values],["#4bb2c5"],hsdataset[hstype].collection);
             
             var locdata = {}
             var lonlat = new OpenLayers.LonLat(lon, lat);
@@ -803,14 +624,14 @@ function getxspectrum(lon,lat)
                 for (i=0; i<nrclicks; i++) {
                     output.push(hsdataset.point[i].spectrum);
                 }
-                spectrum_load(output,colors,hsdataset.collection);
+                spectrum_load(output,colors,hsdataset[hstype].collection);
             }
             else {
                 var output = [];
                 for (i=0; i <= pos; i++) {
                     output.push(hsdataset.point[i].spectrum);
                 }
-                spectrum_load(output,colors,hsdataset.collection);
+                spectrum_load(output,colors,hsdataset[hstype].collection);
             }
             return true;
             }
@@ -827,8 +648,8 @@ function getxspectrum(lon,lat)
 function chooseratio(lon,lat)
     {
     if((lon === undefined) && (lon === undefined)) {
-        var lon = hsdataset.lonlat.lon;
-        var lat = hsdataset.lonlat.lat;
+        var lon = maplonlat.lon;
+        var lat = maplonlat.lat;
     }
     vector_layer2.destroyFeatures(); // destroy the points from the series
     if(getyspectrum(lon,lat))
@@ -840,11 +661,11 @@ function chooseratio(lon,lat)
     }
 function getyspectrum(lon,lat)
     {
-    var collection = hsdataset.collection;
-    var xmin = hsdataset.xmin;
-    var xmax = hsdataset.xmax;
-    var ymin = hsdataset.ymin;
-    var ymax = hsdataset.ymax;
+    var collection = hsdataset[hstype].collection;
+    var xmin = hsdataset[hstype].left;
+    var xmax = hsdataset[hstype].right;
+    var ymin = hsdataset[hstype].bottom;
+    var ymax = hsdataset[hstype].top;
     // if you click within the extent of the WCPS PNG:
     if((lon >= xmin) && (lon <= xmax) && (lat >= ymin) && (lat <= ymax))
         {
@@ -856,14 +677,14 @@ function getyspectrum(lon,lat)
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
         ymin = (imagey - i).toString();
-        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset.collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
+        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
         var spectrabin = getbin(response);
         if(spectrabin != -1)
             {
             var avgspectrum = avgbin(spectrabin);
             var values = [];
             for(var i = 0; i < avgspectrum.length; i++){
-                var wavelength = hsdataset.metadata.wavelength[i];
+                var wavelength = hsdataset[hstype].metadata.wavelength[i];
                 if(avgspectrum[i] != hsdataset.nodata){
                     values.push([wavelength,avgspectrum[i]]);
                 }
@@ -877,7 +698,7 @@ function getyspectrum(lon,lat)
             locdata.spectrum = values;
             locdata.divisor = avgspectrum;
             hsdataset.ratio_divisor = locdata;
-            spectrum_load([values],["#4bb2c5"],hsdataset.collection);
+            spectrum_load([values],["#4bb2c5"],hsdataset[hstype].collection);
             return true;
             }
         else
@@ -977,4 +798,19 @@ function bin(value)
         return "Using bin " + binvalue + "x" + binvalue;
         }
     }
-    
+function vnir()
+    {
+    hstype = "vnir";
+    }
+function ir()
+    {
+    hstype = "ir";
+    }
+function getwcpsvalue(wcpsquery)
+    {
+    url = planetserver_wcps + '?query=' + encodeURIComponent(wcpsquery);
+    csvstring = getBinary(url);
+    csvstring = csvstring.replaceAll('{','');
+    csvstring = csvstring.replaceAll('}','');
+    return csvstring;
+    }

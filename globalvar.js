@@ -4,8 +4,8 @@
 hsdataset = {};
 hsdataset.crs = 'http://kahlua.eecs.jacobs-university.de:8080/def/crs/PS/0/2/';
 hsdataset.prj = 'GEOGCS["GCS_Mars_2000_Sphere",DATUM["D_Mars_2000_sphere",SPHEROID["Mars_2000_Sphere",3396190.0,0.0]],PRIMEM["Reference_Meridian",0.0],UNIT["Degree",0.0174532925199433]]';
-hsdataset.productid = "";
 hsdataset.point = []; // saves data of the clicked locations for query map features
+hsdataset.nodata = 65535;
 hsdataset.mapoptions = {   
     opacity: 1,
     isBaseLayer: false,
@@ -16,6 +16,8 @@ hsdataset.mapoptions = {
     alwaysInRange: true,
     displayInLayerSwitcher: false
 };
+hsdataset.ir = {};
+hsdataset.vnir = {};
 
 // JSON for default 'moladtm' global elevation dataset in rasdaman
 dtmdefault = {}
@@ -27,6 +29,56 @@ dtmdefault.ymin = -88;
 dtmdefault.ymax = 88;
 dtmdefault.width = 46080;
 dtmdefault.height = 22528;
+
+//CAT Summary Products
+var vnirsp;
+var irsp;
+//VNIR
+var bd530;
+var bd860;;
+var bd920;
+var bd640;
+var sh600;
+var rbr;
+var r770;
+//IR
+var olindex;
+var olindex2;
+var lcpindex;
+var hcpindex;
+var bd2100;
+var bd2200;
+var bd2210;
+var bd1900r;
+var sindex;
+var d2300;
+var bd1980;
+var doub2200;
+var bd2230;
+var bd2500;
+var cindex;
+var bd3400;
+var bd3200;
+var bd3100;
+var bd3000;
+var bdcarb;
+var icer2;
+var bd1900;
+var bd1750;
+var icer1;
+var bd1500;
+var bd1435;
+var islope1;
+var ira;
+var irr3;
+var bd2700;
+var r2700;
+var irr2;
+var bd2600;
+var bd2350;
+var bd2000co2;
+var bd1400h2o;
+var bd1270o2;
 
 //MRDR
 var mrdr = {
@@ -72,7 +124,13 @@ var regions = {
             'projection': 'PS:1'}],
         'dtm': [
             {'collection': 'galehrscdtm',
-            'name': 'Gale HRSC DTM'}]
+            'name': 'Gale HRSC DTM',
+            'width':2325,
+            'height':4549,
+            'xmin':135.86945014764,
+            'xmax':139.79208522914,
+            'ymin':-8.1666731664627,
+            'ymax':-0.49180564570269}]
         },
     'ganges':
         {'id': 'ganges',
@@ -84,7 +142,14 @@ var regions = {
         'wms':[],
         'dtm':[
             {'collection': 'gangeshrscdtm',
-            'name': 'Ganges HRSC DTM'}]},
+            'name': 'Ganges HRSC DTM',
+            'width':12180,
+            'height':6368,
+            'xmin':-52.853791943154,
+            'xmax':-42.579593584562,
+            'ymin':-11.030629160831,
+            'ymax':-5.6590285740068}]
+        },
     'capri':
         {'id': 'capri',
         'name': 'Capri Chasma',
@@ -148,6 +213,8 @@ dtmdataset = {}
 dtmdataset = jQuery.extend({}, dtmdefault);
 
 // Changing variables
+var region;
+var maplonlat;
 var WMSlayers = [];
 var PNGimages = [];
 var imagedata = [];
@@ -160,6 +227,7 @@ var full = 0; // a boolean variable to track if all the dataset.point[]'s are fi
 var turn = 0; // A global variable to keep track of turns for finding spectral ratio
 var crossturn = 0;
 var rgb = 0;
+var hstype = "ir";
 
 // User changable variables. These can later be added to a properties/settings window.
 var nrpoints = 100;

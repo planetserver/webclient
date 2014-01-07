@@ -65,7 +65,7 @@ function initmapevents()
     map.events.register("mousemove", map, function(e)
         {
         var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
-        hsdataset.lonlat = map.getLonLatFromPixel(pixel);
+        maplonlat = map.getLonLatFromPixel(pixel);
         });
     
     zoomBox = new OpenLayers.Control.ZoomBox({ title: "Zoom in box" });
@@ -272,7 +272,7 @@ function initmapevents()
             //var circleout = new OpenLayers.Geometry.Polygon.createRegularPolygon(origin, pointsize, 50);
             //vector_layer4.addFeatures(new OpenLayers.Feature.Vector(circleout));
             //$('#loader').show();
-            getz(lonlat.lon,lonlat.lat);
+            alert(getz(lonlat.lon,lonlat.lat));
             }
         }
     }

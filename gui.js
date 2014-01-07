@@ -4,7 +4,6 @@ var toggleSpectrum;
 var toggleX3d;
 var toggleTutorial;
 var toggleAbout;
-var permalink;
 
 function initguievents()
     {
@@ -26,9 +25,6 @@ function initguievents()
     });
     toggleAbout = new OpenLayers.Control.Button({
         title: "About", displayClass: "olControlToggleAbout", trigger: function(){ toggleDisplay('about'); }
-    });
-    permalink = new OpenLayers.Control.Button({
-        title: "Permalink", displayClass: "olControlPermalink", trigger: function(){ window.location = $('#permalink').attr('href'); }
     });
     }
 function switch_tabs(obj)

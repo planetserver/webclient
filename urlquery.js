@@ -25,9 +25,10 @@ function checksinglecollection()
     {
     if(typeof(QueryString.productid) != "undefined")
         {
-        hsdataset.productid = QueryString.productid.toLowerCase();
-        hsdataset.collection = hsdataset.productid + "_" + pcversion + "_" + ptversion;
-        hsdataset.nodata = 65535;
+        hsdataset.vnir.productid = QueryString.productid.toLowerCase().replace("l_","s_");
+        hsdataset.vnir.collection = hsdataset.vnir.productid + "_" + pcversion + "_" + ptversion;
+        hsdataset.ir.productid = QueryString.productid.toLowerCase().replace("s_","l_");
+        hsdataset.ir.collection = hsdataset.ir.productid + "_" + pcversion + "_" + ptversion;
         consolestring = "";
         if(typeof(QueryString.console) != "undefined")
             {

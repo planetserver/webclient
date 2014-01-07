@@ -34,21 +34,7 @@ body {
 	width: 210px;
 	padding: 2px;
 }
-#bandselect {
-	display: inline-block;
-	background: #fff;
-	font-size: 12px;
-	width: 250px;
-	border: none;
-	text-decoration: none;
-	padding-left: 25px;
-    bottom:0px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	CCborderRadius: 10px;
-}
-#spselect {
+#vnirbandselect, #irbandselect, #vnirsp, #irsp {
 	display: inline-block;
 	background: #fff;
 	font-size: 12px;
