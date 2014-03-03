@@ -496,7 +496,7 @@ function getz(lon,lat)
         var lon = maplonlat.lon;
         var lat = maplonlat.lat;
     }
-    var wcpsquery = 'for data in ( ' + dtmdataset.collection + ' ) return encode(  (data[x:"' + dtmdataset.crs + '"(' + lon + ':' + lon + '),y:"' + dtmdataset.crs + '"(' + lat + ':' + lat + ')]), "csv")';
+    var wcpsquery = 'for data in ( ' + dtmdataset.collection + ' ) return encode(  (data[' + dtmdataset.crsx + ':"' + dtmdataset.crs + '"(' + lon + ':' + lon + '),' + dtmdataset.crsy + ':"' + dtmdataset.crs + '"(' + lat + ':' + lat + ')]), "csv")';
     value = getwcpsvalue(wcpsquery);
     return value;
     }
@@ -567,7 +567,7 @@ function getxspectrum(lon,lat)
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
         ymin = (imagey - i).toString();
-        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
+        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[E:"CRS:1"(' + xmin + ':' + xplus + '),N:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
         var spectrabin = getbin(response);
         if(spectrabin != -1)
             {
@@ -677,7 +677,7 @@ function getyspectrum(lon,lat)
         xmin = (imagex - i).toString();
         yplus = (imagey + i).toString();
         ymin = (imagey - i).toString();
-        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[x:"CRS:1"(' + xmin + ':' + xplus + '),y:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
+        var response = getBinary(planetserver_wcps + '?query=for data in ( ' + hsdataset[hstype].collection + ' ) return encode(  (data[E:"CRS:1"(' + xmin + ':' + xplus + '),N:"CRS:1"(' + ymin + ':' + yplus + ')]), "csv")');
         var spectrabin = getbin(response);
         if(spectrabin != -1)
             {

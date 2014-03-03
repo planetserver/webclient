@@ -57,12 +57,12 @@ function initmap()
     
     GlobalMOLARGB = new OpenLayers.Layer.MapServer("MOLA RGB",
 	                planetserver_ms_wms,
-	                { map: "/var/lib/pgsql/process_data/globalwms/mola.map", layers: 'molargb', projection: 'PS:1'},
+	                { map: "mola.map", layers: 'molargb', projection: 'PS:1'},
                     {isBaseLayer: false, transitionEffect: 'resize', wrapDateLine: true});
                     
     GlobalTHEMISIRday = new OpenLayers.Layer.MapServer("THEMIS IR day",
 	                planetserver_ms_wms,
-	                { map: "/var/lib/pgsql/process_data/globalwms/themis.map", layers: 'themisirday', projection: 'PS:2?0', transparent: 'true'},
+	                { map: "themisirday.map", layers: 'themisirday', projection: 'PS:2?0', transparent: 'true'},
                     {isBaseLayer: false, opacity: 0.5, transitionEffect: 'resize', wrapDateLine: true});
     
     // ATTEMPTS to get http://commondatastorage.googleapis.com/ctx_mosaic_1/ctx_mosaic_1.kml

@@ -23,6 +23,9 @@ function dtm_load()
             dtmdataset.ymax = dtm[i].ymax;
             dtmdataset.width = dtm[i].width;
             dtmdataset.height = dtm[i].height;
+            dtmdataset.crs = dtm[i].crs;
+            dtmdataset.crsx = dtm[i].crsx;
+            dtmdataset.crsy = dtm[i].crsy;
             }
         }
     }
@@ -182,30 +185,33 @@ function getODEfootprints(name,westernlon,easternlon,minlat,maxlat)
     for(var k = 0; k < searchlist.length; k++)
         {
         searchstring = searchlist[k];
-        oderest = JSON.parse(getBinary('http://oderest.rsl.wustl.edu/mars/?query=product&results=x$proj=c0&output=JSON&limit=1000&loc=f&westernlon=' + westernlon.toString() + '&easternlon=' + easternlon.toString() + '&minlat=' + minlat.toString() + '&maxlat=' + maxlat.toString() + '&pdsid=' + searchstring));
+        oderest = JSON.parse(getBinary('http://oderest.rsl.wustl.edu/live/?query=product&results=x$proj=c0&output=JSON&limit=1000&loc=f&westernlon=' + westernlon.toString() + '&easternlon=' + easternlon.toString() + '&minlat=' + minlat.toString() + '&maxlat=' + maxlat.toString() + '&pdsid=' + searchstring));
         var products = oderest.ODEResults.Products.Product;
-        for(var i = 0; i < products.length; i++)
+        if(null != products)
             {
-            // Only show when data is in rasdaman, currently using inrasdaman list in inrasdaman.js
-            // This will need to work using GetCapabilities: http://fuzzytolerance.info/blog/parsing-wms-getcapabilities-with-jquery/
-            var pdsid = products[i].pdsid;
-            var showfootprint = 0;
-            for(var j = 0; j < inrasdaman.length; j++)
+            for(var i = 0; i < products.length; i++)
                 {
-                var coll = pdsid.toLowerCase() + "_" + pcversion + "_" + ptversion;
-                if(inrasdaman[j] == coll)
+                // Only show when data is in rasdaman, currently using inrasdaman list in inrasdaman.js
+                // This will need to work using GetCapabilities: http://fuzzytolerance.info/blog/parsing-wms-getcapabilities-with-jquery/
+                var pdsid = products[i].pdsid;
+                var showfootprint = 0;
+                for(var j = 0; j < inrasdaman.length; j++)
                     {
-                    showfootprint = 1;
+                    var coll = pdsid.toLowerCase() + "_" + pcversion + "_" + ptversion;
+                    if(inrasdaman[j] == coll)
+                        {
+                        showfootprint = 1;
+                        }
                     }
-                }
-            if(showfootprint == 1)
-                {
-                wktstring = products[i].Footprint_geometry;
-                wktstring = wktto180(wktstring); 
-                var polygonFeature = wkt.read(wktstring);
-                polygonFeature.data = products[i]
-                //polygonFeature.geometry.transform(map.displayProjection, map.getProjectionObject());         
-                footprints.addFeatures([polygonFeature]);
+                if(showfootprint == 1)
+                    {
+                    wktstring = products[i].Footprint_geometry;
+                    wktstring = wktto180(wktstring); 
+                    var polygonFeature = wkt.read(wktstring);
+                    polygonFeature.data = products[i]
+                    //polygonFeature.geometry.transform(map.displayProjection, map.getProjectionObject());         
+                    footprints.addFeatures([polygonFeature]);
+                    }
                 }
             }
         }
