@@ -1,4 +1,3 @@
-// Global variable declaration
 
 // JSON for hyperspectral data
 hsdataset = {};
@@ -399,10 +398,7 @@ var regions = {
             'map': 'planetserver.map',
             'layer': 'noachis',
             'projection': 'PS:2'}],
-        'dtm':[]}
-};
-
-/*,
+        'dtm':[]},
     'schiaparelli':
         {'id': 'schiaparelli',
         'name': 'Schiaparelli crater',
@@ -420,7 +416,8 @@ var regions = {
         'minlat': -0.5,
         'maxlat': 6,
         'wms':[],
-        'dtm':[]}*/
+        'dtm':[]}
+};
 
 // JSON for currently loaded elevation dataset, default 'moladtm'.
 dtmdataset = {}
