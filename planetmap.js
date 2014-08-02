@@ -26,6 +26,13 @@ OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2';
 var maxextent = new OpenLayers.Bounds(-180,-90,180,90);
 //
 
+function showAvailableFootprints(westernlon, easternlon, minlat, maxlat)
+    {
+        getODEfootprints('CRISM footprints',westernlon,easternlon,minlat,maxlat);
+        map.addLayers([footprints]);
+        map.zoomToExtent(footprints.getDataExtent());
+    }
+
 function initmap()
     {
     map = new OpenLayers.Map( 'map' , {
@@ -35,6 +42,8 @@ function initmap()
                             map.zoomIn();
                             urlparams['zoomlevel'] = map.getZoom();
                             seturlhash();
+                            var bounds = map.getExtent();
+                            showAvailableFootprints(bounds.left, bounds.right, bounds.bottom, bounds.top);
                         }
                     }),
                     new OpenLayers.Control.PanZoomBar(),
