@@ -59,6 +59,8 @@ function initloadregion()
             {
             region = $('#chooseregion').val();
             data = regions[region];
+            urlparams['region'] = region;
+            seturlhash();
             loadregion(data);
             getODEfootprints('CRISM footprints',data.westernlon,data.easternlon,data.minlat,data.maxlat);
             map.addLayers([footprints]);

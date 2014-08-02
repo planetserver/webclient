@@ -30,7 +30,13 @@ function initmap()
     {
     map = new OpenLayers.Map( 'map' , {
                 controls: [
-                    new OpenLayers.Control.Navigation(),
+                    new OpenLayers.Control.Navigation({
+                        defaultDblClick: function(event) {
+                            map.zoomIn();
+                            urlparams['zoomlevel'] = map.getZoom();
+                            seturlhash();
+                        }
+                    }),
                     new OpenLayers.Control.PanZoomBar(),
                     //new OpenLayers.Control.LayerSwitcher({'ascending':false}),
                     //new OpenLayers.Control.Permalink(),

@@ -66,8 +66,16 @@ function initmapevents()
         {
         var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
         maplonlat = map.getLonLatFromPixel(pixel);
+        urlparams['lat'] = maplonlat.lat;
+        urlparams['lon'] = maplonlat.lon;
+        seturlhash();
         });
-    
+
+    map.events.register("mouseout", map, function(e)
+        {
+            location.hash = ""
+        });
+
     zoomBox = new OpenLayers.Control.ZoomBox({ title: "Zoom in box" });
     navHistory = new OpenLayers.Control.NavigationHistory();  
     navHistory.previous.title = "View history backward";

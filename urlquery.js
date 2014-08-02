@@ -64,3 +64,21 @@ function checkmrdr()
             }
         }
     }
+
+ function createparam(key) {
+    var value = urlparams[key];
+    return key + ":" + value;
+ } 
+
+ function seturlhash() 
+    {
+        var hashvalue = createparam('region');
+        hashvalue += "&" + createparam('lat');
+        hashvalue += "&" + createparam('lon');
+        hashvalue += "&" + createparam('zoomlevel');
+        location.hash = hashvalue;
+    }
+
+
+
+

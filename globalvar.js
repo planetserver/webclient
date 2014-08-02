@@ -471,3 +471,9 @@ Proj4js.defs["PS:2?180"] = "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=
 // How to deal with these version numbers, where to store them, still needs to be decided.
 var pcversion = "1"; // PlanetServer processing chain version
 var ptversion = "01"; // PlanetServer processing type version
+
+var urlparams = new Object();
+urlparams["region"] = "";
+urlparams["lat"] = "";
+urlparams["lon"] = "";
+urlparams["zoomlevel"] = 3;
