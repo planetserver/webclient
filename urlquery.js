@@ -65,18 +65,19 @@ function checkmrdr()
         }
     }
 
- function createparam(key) {
-    var value = urlparams[key];
-    return key + ":" + value;
- } 
-
- function seturlhash() 
+function checklonlat() 
     {
-        var hashvalue = createparam('region');
-        hashvalue += "&" + createparam('lat');
-        hashvalue += "&" + createparam('lon');
-        hashvalue += "&" + createparam('zoomlevel');
-        location.hash = hashvalue;
+    if (typeof(QueryString.lat) != "undefined" && typeof(QueryString.lon) != "undefined") 
+        {
+            if (typeof(QueryString.zoomlevel) != "undefined") 
+            {
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat), QueryString.zoomlevel, false, false);
+
+            } else 
+            {
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat), false, false);
+            }
+        }
     }
 
 

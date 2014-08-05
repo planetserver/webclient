@@ -8,7 +8,7 @@ var vector_layer;
 var vector_layer2;
 var vector_layer3;
 var vector_layer4;
-
+var delta = 5;
 // OpenLayers
 OpenLayers.Util.VincentyConstants={a:3396190,b:3396190,f:0}
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 2;
@@ -26,12 +26,75 @@ OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2';
 var maxextent = new OpenLayers.Bounds(-180,-90,180,90);
 //
 
+function createParam(key) 
+    {
+        var value = urlparams[key];
+        return key + "=" + value;
+    } 
+
+ function setUrlHash() 
+    {
+        var hashvalue = createParam('region');
+        hashvalue += "&" + createParam("productid");
+        hashvalue += "&" + createParam('lat');
+        hashvalue += "&" + createParam('lon');
+        hashvalue += "&" + createParam('zoomlevel');
+        location.hash = hashvalue;
+    }
+
 function showAvailableFootprints(westernlon, easternlon, minlat, maxlat)
     {
         getODEfootprints('CRISM footprints',westernlon,easternlon,minlat,maxlat);
         map.addLayers([footprints]);
         map.zoomToExtent(footprints.getDataExtent());
     }
+
+
+function liesInArea(jsonobj, lonlat) 
+    {
+        if (lonlat.lon >= jsonobj['westernlon'])
+            if (lonlat.lon <= jsonobj['easternlon'])
+                if (lonlat.lat >= jsonobj['minlat'])
+                    if (lonlat.lat <= jsonobj['maxlat']) 
+                        return true;
+        return false;
+
+    }
+
+function liesInRegion(region, lonlat) 
+    {
+        return liesInArea(regions[region], lonlat);
+    }
+
+function liesInProduct(productid, lonlat) 
+{
+    return liesInArea(mrdr[productid], lonlat);
+}
+
+function getRegion(lonlat) 
+    {
+        for (region in regions)
+        {
+            if (liesInRegion(region, lonlat)) 
+            {
+                return region;
+            }
+        }
+        return null;
+    }
+
+function getProduct(lonlat) 
+    {
+        for (productid in mrdr) 
+        {
+            if (liesInProduct(productid, lonlat))
+            {
+                return productid;
+            }
+        }
+        return null;
+    }
+
 
 function initmap()
     {
@@ -41,9 +104,11 @@ function initmap()
                         defaultDblClick: function(event) {
                             map.zoomIn();
                             urlparams['zoomlevel'] = map.getZoom();
-                            seturlhash();
+                            setUrlHash();
                             var bounds = map.getExtent();
-                            showAvailableFootprints(bounds.left, bounds.right, bounds.bottom, bounds.top);
+                            var lat = urlparams['lat'];
+                            var lon = urlparams['lon'];
+                            showAvailableFootprints(lon-delta, lon+delta, lon-delta, lon+delta);
                         }
                     }),
                     new OpenLayers.Control.PanZoomBar(),

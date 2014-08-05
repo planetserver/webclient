@@ -474,6 +474,8 @@ var ptversion = "01"; // PlanetServer processing type version
 
 var urlparams = new Object();
 urlparams["region"] = "";
+urlparams["productid"] = "";
 urlparams["lat"] = "";
 urlparams["lon"] = "";
 urlparams["zoomlevel"] = 3;
+
