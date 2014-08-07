@@ -71,15 +71,13 @@ function checklonlat()
         {
             if (typeof(QueryString.zoomlevel) != "undefined") 
             {
-                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat), QueryString.zoomlevel, false, false);
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat));
+                map.zoomTo(QueryString.zoomlevel);
 
             } else 
             {
-                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat), false, false);
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat));
             }
         }
     }
-
-
-
 
