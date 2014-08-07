@@ -65,15 +65,8 @@ function setUrlParamsFromPixel(pixel)
         lonlat = map.getLonLatFromPixel(pixel);
         urlparams['lat'] = lonlat.lat;
         urlparams['lon'] = lonlat.lon;
-        var region = getRegion(lonlat);
-        if (region != null) 
-            {
-            urlparams['region'] = region;
-            }
-        var productid = getProduct(lonlat);
-        if (productid != null) {
-            urlparams['productid'] = productid;
-        }
+        urlparams['region'] =  getRegion(lonlat);
+        urlparams['productid'] = getProduct(lonlat);
     }
 
 function initmapevents()

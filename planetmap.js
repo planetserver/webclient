@@ -80,7 +80,7 @@ function getRegion(lonlat)
                 return region;
             }
         }
-        return null;
+        return "";
     }
 
 function getProduct(lonlat) 
@@ -92,7 +92,7 @@ function getProduct(lonlat)
                 return productid;
             }
         }
-        return null;
+        return "";
     }
 
 
@@ -104,11 +104,15 @@ function initmap()
                         defaultDblClick: function(event) {
                             map.zoomIn();
                             urlparams['zoomlevel'] = map.getZoom();
-                            setUrlHash();
-                            var bounds = map.getExtent();
-                            var lat = urlparams['lat'];
-                            var lon = urlparams['lon'];
-                            showAvailableFootprints(lon-delta, lon+delta, lon-delta, lon+delta);
+                            var productid = urlparams['productid'];
+                            if (productid != "")
+                                {
+                                loadmrdr(productid);
+                                }
+                            else 
+                                {
+                                setUrlHash();
+                                }
                         }
                     }),
                     new OpenLayers.Control.PanZoomBar(),
