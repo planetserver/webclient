@@ -112,6 +112,11 @@ function initmap()
                             else 
                                 {
                                 setUrlHash();
+                                if (map.getZoom() == 5 || map.getZoom() == 6)
+                                    {
+                                        var bounds = map.getExtent();
+                                        showAvailableFootprints(bounds.left, bounds.right, bounds.bottom, bounds.top);
+                                    }
                                 }
                         }
                     }),
