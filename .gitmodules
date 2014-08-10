@@ -1,0 +1,3 @@
+[submodule "regionsdata"]
+	path = regionsdata
+	url = /home/caroline/git/regionsdata
