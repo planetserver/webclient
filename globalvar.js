@@ -1,4 +1,3 @@
-// Global variable declaration
 
 // JSON for hyperspectral data
 hsdataset = {};
@@ -297,11 +296,11 @@ var regions = {
         'maxlat': -3,
         'wms': [
             {'name': 'Gale HRSC mosaic',
-            'map': '/var/lib/pgsql/process_data/wms/gale/galehrsc.map',
+            'map': 'galehrsc.map',
             'layer': 'galehrsc',
             'projection': 'PS:1'},
             {'name': 'Gale CTX mosaic',
-            'map': '/var/lib/pgsql/process_data/wms/gale/galectx.map',
+            'map': 'galectx.map',
             'layer': 'galectx',
             'projection': 'PS:1'}],
         'dtm': [
@@ -373,10 +372,33 @@ var regions = {
         'minlat': 16,
         'maxlat': 30,
         'wms':[],
-        'dtm':[]}
-};
-
-/*,
+        'dtm':[]},
+    'arabia':
+        {'id': 'arabia',
+        'name': 'Arabia Terra',
+        'westernlon': -15,
+        'easternlon': 5,
+        'minlat': -7.5,
+        'maxlat': 7.5,
+        'wms':[
+            {'name': 'Arabia Terra CTX mosaics',
+            'map': 'planetserver.map',
+            'layer': 'arabia',
+            'projection': 'PS:2'}],
+        'dtm':[]},
+    'noachis':
+        {'id': 'noachis',
+        'name': 'Noachis Terra',
+        'westernlon': 10,
+        'easternlon': 50,
+        'minlat': -37.5,
+        'maxlat': -17.5,
+        'wms':[
+            {'name': 'Noachia Terra CTX mosaics',
+            'map': 'planetserver.map',
+            'layer': 'noachis',
+            'projection': 'PS:2'}],
+        'dtm':[]},
     'schiaparelli':
         {'id': 'schiaparelli',
         'name': 'Schiaparelli crater',
@@ -394,7 +416,8 @@ var regions = {
         'minlat': -0.5,
         'maxlat': 6,
         'wms':[],
-        'dtm':[]}*/
+        'dtm':[]}
+};
 
 // JSON for currently loaded elevation dataset, default 'moladtm'.
 dtmdataset = {}
@@ -448,3 +471,11 @@ Proj4js.defs["PS:2?180"] = "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=
 // How to deal with these version numbers, where to store them, still needs to be decided.
 var pcversion = "1"; // PlanetServer processing chain version
 var ptversion = "01"; // PlanetServer processing type version
+
+var urlparams = new Object();
+urlparams["region"] = "";
+urlparams["productid"] = "";
+urlparams["lat"] = "";
+urlparams["lon"] = "";
+urlparams["zoomlevel"] = 3;
+

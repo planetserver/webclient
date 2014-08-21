@@ -59,15 +59,30 @@ function toggleQueryMode4()
          queryEventHandler4.deactivate();
       }
     }
+
+function setUrlParamsFromPixel(pixel)
+    {
+        lonlat = map.getLonLatFromPixel(pixel);
+        urlparams['lat'] = lonlat.lat;
+        urlparams['lon'] = lonlat.lon;
+        urlparams['region'] =  getRegion(lonlat);
+        urlparams['productid'] = getProduct(lonlat);
+    }
+
 function initmapevents()
     {
     // Used by addspectrum() and chooseratio() in the console
     map.events.register("mousemove", map, function(e)
         {
-        var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
-        maplonlat = map.getLonLatFromPixel(pixel);
+        setUrlParamsFromPixel(new OpenLayers.Pixel(e.xy.x,e.xy.y));
+        setUrlHash();
         });
-    
+
+    map.events.register("mouseout", map, function(e)
+        {
+            location.hash = ""
+        });
+
     zoomBox = new OpenLayers.Control.ZoomBox({ title: "Zoom in box" });
     navHistory = new OpenLayers.Control.NavigationHistory();  
     navHistory.previous.title = "View history backward";

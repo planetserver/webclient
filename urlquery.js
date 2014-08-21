@@ -64,3 +64,20 @@ function checkmrdr()
             }
         }
     }
+
+function checklonlat() 
+    {
+    if (typeof(QueryString.lat) != "undefined" && typeof(QueryString.lon) != "undefined") 
+        {
+            if (typeof(QueryString.zoomlevel) != "undefined") 
+            {
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat));
+                map.zoomTo(QueryString.zoomlevel);
+
+            } else 
+            {
+                map.panTo(new OpenLayers.LonLat(QueryString.lon, QueryString.lat));
+            }
+        }
+    }
+
