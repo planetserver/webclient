@@ -92,7 +92,7 @@ function initmap()
             // })
         // });
  
-    map.addLayers([fake, GlobalMOLARGB, GlobalTHEMISIRday]); //, GaleHRSCWms, GaleCTXWms]);
+    map.addLayers([fake, GlobalMOLARGB, GlobalTHEMISIRday]);//, GaleHRSCWms]);//, GaleCTXWms]);
     map.zoomTo(3);
     }
 function initpanels()
