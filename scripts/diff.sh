@@ -1,11 +1,22 @@
 #!/bin/bash  
 
+# This script can be used to perform a diff on a 
+# local folder and a folder that is on github
+
 # $1 is the folder that we want to compare with the repo
 # $2 is the parent of $1
 # $3 is the name of the repo
 # $4 is the url for the repo
 
-function singleFolderDiff() {
+function usage() {
+	echo "usage : bash diff.sh <local-folder> <parent-folder-name> <repo-name> <repo-url>"
+}
+
+function localDiff() {
+	if [ "$4" = "" ]
+	then usage
+		exit 1
+	fi
 	cd "$2"
 	mkdir "tmp"
 	cd "tmp"
@@ -16,7 +27,7 @@ function singleFolderDiff() {
 		echo "$IS_UP_TO_DATE"
 	else echo "The metadata is up to date"
 	fi	
-	rm -rf "tmp"
+	rm -rf "../tmp"
 }
 
-singleFolderDiff "@"
+localDiff "$1" "$2" "$3" "$4" 
