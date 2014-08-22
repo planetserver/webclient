@@ -1,6 +1,6 @@
 function initmetadata()
     {
-    var vnirmetadata = getBinary('regionsdata/metadata/' + hsdataset.vnir.collection + '.js');
+    var vnirmetadata = getBinary('metadata/' + hsdataset.vnir.collection + '.js');
     hsdataset.vnir.metadata = JSON.parse(vnirmetadata);
     hsdataset.vnir.xmin = hsdataset.vnir.metadata.xmin;
     hsdataset.vnir.xmax = hsdataset.vnir.metadata.xmax;
@@ -17,7 +17,7 @@ function initmetadata()
     hsdataset.vnir.top = vnirbbox.top;
     hsdataset.vnir.bbox = vnirbbox;
 
-    var irmetadata = getBinary('regionsdata/metadata/' + hsdataset.ir.collection + '.js');
+    var irmetadata = getBinary('metadata/' + hsdataset.ir.collection + '.js');
     hsdataset.ir.metadata = JSON.parse(irmetadata);
     hsdataset.ir.xmin = hsdataset.ir.metadata.xmin;
     hsdataset.ir.xmax = hsdataset.ir.metadata.xmax;
