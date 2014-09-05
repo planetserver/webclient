@@ -187,7 +187,7 @@ function getODEfootprints(name,westernlon,easternlon,minlat,maxlat)
     for(var k = 0; k < searchlist.length; k++)
         {
         searchstring = searchlist[k];
-        oderest = JSON.parse(getBinary('http://oderest.rsl.wustl.edu/live/?query=product&results=x$proj=c0&output=JSON&limit=1000&loc=f&westernlon=' + westernlon.toString() + '&easternlon=' + easternlon.toString() + '&minlat=' + minlat.toString() + '&maxlat=' + maxlat.toString() + '&pdsid=' + searchstring));
+        oderest = JSON.parse(getBinary('http://oderest.rsl.wustl.edu/live/?query=product&results=x&proj=c0&output=JSON&limit=1000&loc=f&westernlon=' + westernlon.toString() + '&easternlon=' + easternlon.toString() + '&minlat=' + minlat.toString() + '&maxlat=' + maxlat.toString() + '&pdsid=' + searchstring));
         var products = oderest.ODEResults.Products.Product;
         if(null != products)
             {
