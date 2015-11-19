@@ -1,7 +1,7 @@
 
 // JSON for hyperspectral data
 hsdataset = {};
-hsdataset.crs = 'http://planetserver.jacobs-university.de:8080/def/crs/PS/0/2';
+hsdataset.crs = 'http://es1.planetserver.eu:8080/def/crs/PS/0/2';
 hsdataset.prj = 'GEOGCS["GCS_Mars_2000_Sphere",DATUM["D_Mars_2000_sphere",SPHEROID["Mars_2000_Sphere",3396190.0,0.0]],PRIMEM["Reference_Meridian",0.0],UNIT["Degree",0.0174532925199433]]';
 hsdataset.point = []; // saves data of the clicked locations for query map features
 hsdataset.nodata = 65535;
@@ -21,7 +21,7 @@ hsdataset.vnir = {};
 // JSON for default 'moladtm' global elevation dataset in rasdaman
 dtmdefault = {}
 dtmdefault.collection = 'moladtm';
-dtmdefault.crs = 'http://planetserver.jacobs-university.de:8080/def/crs/PS/0/1';
+dtmdefault.crs = 'http://es1.planetserver.eu:8080/def/crs/PS/0/1';
 dtmdefault.crsx = 'Long';
 dtmdefault.crsy = 'Lat';
 dtmdefault.xmin = -180;
@@ -312,7 +312,7 @@ var regions = {
             'xmax':139.79208522914,
             'ymin':-8.1666731664627,
             'ymax':-0.49180564570269,
-            'crs':'http://planetserver.jacobs-university.de:8080/def/crs/PS/0/1',
+            'crs':'http://es1.planetserver.eu:8080/def/crs/PS/0/1',
             'crsx':'Long',
             'crsy':'Lat'}]
         },
@@ -333,7 +333,7 @@ var regions = {
             'xmax':-42.579593584562,
             'ymin':-11.030629160831,
             'ymax':-5.6590285740068,
-            'crs':'http://planetserver.jacobs-university.de:8080/def/crs/PS/0/1',
+            'crs':'http://es1.planetserver.eu:8080/def/crs/PS/0/1',
             'crsx':'Long',
             'crsy':'Lat'}]
         },
@@ -452,10 +452,10 @@ var maxstretch = 0;
 var filename = "image";
 
 // Fixed variables
-var planetserver_ps_wms = "http://planetserver.jacobs-university.de:8080/petascope/wms";
-var planetserver_ms_wms = "http://planetserver.jacobs-university.de/cgi-bin/mapserv";
-var planetserver_wcps = "http://planetserver.jacobs-university.de:8080/rasdaman/ows";
-var planetserver_wcsdc = "http://planetserver.jacobs-university.de:8080/petascope/wcs?version=2.0.0&service=WCS&request=DescribeCoverage&coverageId=";
+var planetserver_ps_wms = "http://es1.planetserver.eu:8080/petascope/wms";
+var planetserver_ms_wms = "http://es1.planetserver.eu/cgi-bin/mapserv";
+var planetserver_wcps = "http://es1.planetserver.eu:8080/rasdaman/ows";
+var planetserver_wcsdc = "http://es1.planetserver.eu:8080/petascope/wcs?version=2.0.0&service=WCS&request=DescribeCoverage&coverageId=";
 Proj4js.defs["PS:1"] = "+proj=longlat +a=3396190 +b=3396190 +no_defs";
 Proj4js.defs["ODE"] = "+proj=longlat +a=3396190 +b=3396190 +lon_wrap=180 +no_defs";
 //Proj4js.defs["EPSG:4326"] = "+proj=longlat +a=3396190 +b=3396190 +no_defs";
